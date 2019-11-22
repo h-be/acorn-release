@@ -16,7 +16,7 @@ git clone --single-branch --branch electron-fixes --depth=1 https://github.com/h
 # this is necessary because we are serving a file that's normally served over
 # http, as a file://, breaking the /dna_connections.json endpoint, which it
 # would otherwise use
-# sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8888" })/g' ./acorn-ui/src/index.js
+sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8888" })/g' ./acorn-ui/src/index.js
 
 # dna
 # save the packaged DNA address to `dna_address`
@@ -24,7 +24,8 @@ node hc-package-and-save-address.js `which hc`
 cp -R ./acorn-hc/dist/. ./dna/
 
 # ui
-cd ../acorn-ui
+cd acorn-ui
 npm install
 npm run build
-cp -R ./dist/. ../ui/
+cd ..
+cp -R ./acorn-ui/dist/. ./ui/

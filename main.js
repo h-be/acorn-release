@@ -3,7 +3,6 @@ const { app, BrowserWindow, Menu } = require('electron')
 const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
-const url = require('url')
 const kill = require('tree-kill')
 const { log } = require('./logger')
 require('electron-context-menu')()
@@ -20,11 +19,10 @@ function createWindow() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1980,
-    height: 1200,
-    // icon: path.join(__dirname, 'BasicChat_Icon.png'),
+    width: 1400,
+    height: 900,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: true
     }
   })
 
@@ -58,6 +56,8 @@ function startConductor() {
   run.stdout.on('data', data => {
     log('info', data.toString())
     if (data.toString().indexOf("Done. All interfaces started.") > -1) {
+      // trigger refresh once we know
+      // interfaces have booted up
       mainWindow.loadURL('file://' + __dirname + '/ui/index.html')
     }
   })
