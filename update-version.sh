@@ -10,7 +10,6 @@ rm -rf ui
 mkdir ui
 git clone --single-branch --branch electron-fixes --depth=1 https://github.com/h-be/acorn-ui.git
 # git clone --depth=1 https://github.com/h-be/acorn-hc.git
-# node ./add-relative-path-to-build.js
 
 # we need to configure the hc-web-client initialization to
 # use the right websocket URL

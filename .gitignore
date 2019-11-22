@@ -5,6 +5,7 @@ acorn-ui
 storage/**/*
 keystore.key
 conductor-config.toml
+Acorn-darwin-x64/
 
 # Logs
 logs

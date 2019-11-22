@@ -1,7 +1,7 @@
 {
   "name": "acorn-release",
   "version": "1.0.0",
-  "description": "A Holochain chat Electron application",
+  "description": "A Holochain Acorn State of Affairs Tree application",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
