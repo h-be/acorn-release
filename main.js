@@ -7,7 +7,10 @@ const kill = require('tree-kill')
 const { log } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
-require('electron-debug')()
+// enables the devtools window automatically
+// require('electron-debug')()
+
+const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 
 // ELECTRON
 // Keep a global reference of the window object, if you don't, the window will
@@ -42,8 +45,18 @@ function createWindow() {
 }
 
 let run
-function startConductor() {
 
+// overwrite the DNA hash address in the conductor-config
+// with the up to date one
+function updateConductorConfig() {
+  const dnaAddress = fs.readFileSync(path.join(__dirname, DNA_ADDRESS_FILE))
+  const conductorConfigPath = path.join(__dirname, 'conductor-config.toml')
+  const conductorConfig = fs.readFileSync(conductorConfigPath).toString()
+  const newConductorConfig = conductorConfig.replace(/hash = '\w+'/g, `hash = '${dnaAddress}'`)
+  fs.writeFileSync(conductorConfigPath, newConductorConfig)
+}
+
+function startConductor() {
   if (process.platform === "darwin") {
     run = spawn(path.join(__dirname, "./run-darwin.sh"))
   } else if (process.platform === "linux") {
@@ -98,6 +111,10 @@ app.on('ready', function () {
   setup.on('exit', (code) => {
     log('info', code)
     if (code === 0 || code === 127) {
+      // to avoid rebuilding key-config-gen
+      // all the time, according to new DNA address
+      // we can just update it after the fact this way
+      updateConductorConfig()
       startConductor()
     } else {
       log('error', 'failed to perform setup')

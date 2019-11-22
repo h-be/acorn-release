@@ -7,6 +7,9 @@ keystore.key
 conductor-config.toml
 Acorn-darwin-x64/
 
+.DS_Store
+**/.DS_Store
+
 # Logs
 logs
 *.log

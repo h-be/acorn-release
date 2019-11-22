@@ -5,14 +5,16 @@ const path = require('path')
 // call with `which hc`
 const hcPackagePath = process.argv[2]
 
-const dnaFileName = 'dna_address'
+const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 
 const run = spawn(hcPackagePath, ["package"], {
   cwd: path.join(__dirname, 'acorn-hc'),
 })
 run.stdout.on('data', data => {
   if (data.toString().indexOf("DNA hash: ") > -1) {
-    const dnaAddress = data.toString().replace('DNA hash: ', '')
-    fs.writeFileSync(path.join(__dirname, dnaFileName), dnaAddress)
+    // trim cuts off any whitespace or newlines
+    const dnaAddressPath = path.join(__dirname, DNA_ADDRESS_FILE)
+    const dnaAddress = data.toString().replace('DNA hash: ', '').trim()
+    fs.writeFileSync(dnaAddressPath, dnaAddress)
   }
 })
