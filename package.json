@@ -1,0 +1,34 @@
+{
+  "name": "acorn-release",
+  "version": "1.0.0",
+  "description": "A Holochain chat Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "clean": "./clean.sh",
+    "build-clean": "rm keystore.key && rm conductor-config.toml && ./clear-storage.sh",
+    "build-mac": "electron-packager . Acorn --platform=darwin --overwrite",
+    "build-linux": "electron-packager . Acorn --platform=linux --overwrite"
+  },
+  "repository": "https://github.com/h-be/acorn-release",
+  "keywords": [
+    "Electron",
+    "Acorn",
+    "State of Affairs"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "command-exists": "^1.2.8",
+    "electron-context-menu": "^0.12.1",
+    "electron-debug": "^3.0.1",
+    "electron-packager": "^13.1.1",
+    "fix-path": "^2.1.0",
+    "open": "^6.3.0",
+    "sudo-prompt": "^9.0.0",
+    "tree-kill": "^1.2.1"
+  },
+  "devDependencies": {
+    "electron": "7.1.2"
+  }
+}
