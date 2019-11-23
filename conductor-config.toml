@@ -22,7 +22,9 @@ dna = 'hc-run-dna'
 id = 'acorn'
 
 [instances.storage]
-type = 'memory'
+type = 'pickle'
+# to replace
+path = 'picklepath'
 
 [[interfaces]]
 admin = true

@@ -21,11 +21,15 @@ let quit = false
 const CONFIG_PATH = path.join(app.getPath('appData'), 'Acorn')
 const KEYSTORE_FILE = 'keystore.key'
 const CONDUCTOR_CONFIG_FILE = 'conductor-config.toml'
+const STORAGE_PATH = path.join(CONFIG_PATH, 'storage')
 const NEW_CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, CONDUCTOR_CONFIG_FILE)
 const KEYSTORE_FILE_PATH = path.join(CONFIG_PATH, KEYSTORE_FILE)
 
 if(!fs.existsSync(CONFIG_PATH)) {
   fs.mkdirSync(CONFIG_PATH)
+}
+if(!fs.existsSync(STORAGE_PATH)) {
+  fs.mkdirSync(STORAGE_PATH)
 }
 
 let HC_BIN, HOLOCHAIN_BIN
@@ -79,7 +83,9 @@ function updateConductorConfig(publicAddress) {
   // replace agent public key
   newConductorConfig = newConductorConfig.replace(/public_address = ''/g, `public_address = "${publicAddress}"`)
   // replace key path
-  newConductorConfig = newConductorConfig.replace(/keystore_file = ''/g, `keystore_file = "${KEYSTORE_FILE_PATH}"`)  
+  newConductorConfig = newConductorConfig.replace(/keystore_file = ''/g, `keystore_file = "${KEYSTORE_FILE_PATH}"`)
+  // replace pickle db storage path
+  newConductorConfig = newConductorConfig.replace(/path = 'picklepath'/g, `path = "${STORAGE_PATH}"`)
   
   // write to a folder we can write to
   fs.writeFileSync(NEW_CONDUCTOR_CONFIG_PATH, newConductorConfig)
@@ -120,12 +126,13 @@ app.on('ready', function () {
     return
   }
 
-  // TODO: read the public address from the stdout
+  log('info', 'could not find existing public key, now creating one and running setup')
+
   let publicAddress
   const setup = spawn(HC_BIN, ["keygen", "--path", KEYSTORE_FILE_PATH, "--nullpass", "--quiet"])
-  setup.stdout.on('data', data => {
-    log('info', data.toString())
-    publicAddress = '123'
+  setup.stdout.once('data', data => {
+    // first line out of two is the public address
+    publicAddress = data.toString().split('\n')[0]
   })
   setup.stderr.on('data', err => {
     log('error', err.toString())
