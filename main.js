@@ -94,7 +94,9 @@ function updateConductorConfig(publicAddress) {
 let run
 
 function startConductor() {
-  run = spawn(HOLOCHAIN_BIN, ["-c", NEW_CONDUCTOR_CONFIG_PATH])
+  run = spawn(HOLOCHAIN_BIN, ["-c", NEW_CONDUCTOR_CONFIG_PATH], {
+    cwd: __dirname
+  })
   run.stdout.on('data', data => {
     log('info', data.toString())
     if (data.toString().indexOf("Done. All interfaces started.") > -1) {
@@ -129,7 +131,9 @@ app.on('ready', function () {
   log('info', 'could not find existing public key, now creating one and running setup')
 
   let publicAddress
-  const setup = spawn(HC_BIN, ["keygen", "--path", KEYSTORE_FILE_PATH, "--nullpass", "--quiet"])
+  const setup = spawn(HC_BIN, ["keygen", "--path", KEYSTORE_FILE_PATH, "--nullpass", "--quiet"], {
+    cwd: __dirname
+  })
   setup.stdout.once('data', data => {
     // first line out of two is the public address
     publicAddress = data.toString().split('\n')[0]
