@@ -1,0 +1,54 @@
+
+bridges = []
+persistence_dir = '.'
+ui_bundles = []
+ui_interfaces = []
+
+[[agents]]
+id = 'hc-run-agent'
+# to replace
+keystore_file = ''
+name = 'Agent 1'
+# to replace
+public_address = ''
+[[dnas]]
+file = './dna/acorn-hc.dna.json'
+hash = ''
+id = 'hc-run-dna'
+
+[[instances]]
+agent = 'hc-run-agent'
+dna = 'hc-run-dna'
+id = 'acorn'
+
+[instances.storage]
+type = 'memory'
+
+[[interfaces]]
+admin = true
+id = 'websocket-interface'
+
+[[interfaces.instances]]
+id = 'acorn'
+
+[interfaces.driver]
+port = 8888
+type = 'websocket'
+
+[logger]
+state_dump = false
+type = 'info'
+
+[logger.rules]
+rules = []
+
+[passphrase_service]
+type = 'cmd'
+
+[signals]
+consistency = false
+trace = false
+
+[network]
+type = 'sim2h'
+sim2h_url = 'wss://sim2h.holochain.org:9000'

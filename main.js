@@ -18,12 +18,34 @@ const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 let mainWindow
 let quit = false
 
+const CONFIG_PATH = path.join(app.getPath('appData'), 'Acorn')
+const KEYSTORE_FILE = 'keystore.key'
+const CONDUCTOR_CONFIG_FILE = 'conductor-config.toml'
+const NEW_CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, CONDUCTOR_CONFIG_FILE)
+const KEYSTORE_FILE_PATH = path.join(CONFIG_PATH, KEYSTORE_FILE)
+
+if(!fs.existsSync(CONFIG_PATH)) {
+  fs.mkdirSync(CONFIG_PATH)
+}
+
+let HC_BIN, HOLOCHAIN_BIN
+if (process.platform === "darwin") {
+  HC_BIN = "./hc-darwin"
+  HOLOCHAIN_BIN = "./holochain-darwin"
+} else if (process.platform === "linux") {
+  HC_BIN = "./hc-linux"
+  HOLOCHAIN_BIN = "./holochain-linux"
+} else {
+  log('error', "unsupported platform: " + process.platform)
+  return
+}
+
 function createWindow() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
+    width: 1980,
+    height: 1200,
     webPreferences: {
       nodeIntegration: true
     }
@@ -44,28 +66,29 @@ function createWindow() {
   })
 }
 
-let run
-
 // overwrite the DNA hash address in the conductor-config
 // with the up to date one
-function updateConductorConfig() {
+function updateConductorConfig(publicAddress) {
   const dnaAddress = fs.readFileSync(path.join(__dirname, DNA_ADDRESS_FILE))
-  const conductorConfigPath = path.join(__dirname, 'conductor-config.toml')
-  const conductorConfig = fs.readFileSync(conductorConfigPath).toString()
-  const newConductorConfig = conductorConfig.replace(/hash = '\w+'/g, `hash = '${dnaAddress}'`)
-  fs.writeFileSync(conductorConfigPath, newConductorConfig)
+  // read from the local template
+  const origConductorConfigPath = path.join(__dirname, CONDUCTOR_CONFIG_FILE)
+  const conductorConfig = fs.readFileSync(origConductorConfigPath).toString()
+
+  // replace dna
+  let newConductorConfig = conductorConfig.replace(/hash = ''/g, `hash = "${dnaAddress}"`)
+  // replace agent public key
+  newConductorConfig = newConductorConfig.replace(/public_address = ''/g, `public_address = "${publicAddress}"`)
+  // replace key path
+  newConductorConfig = newConductorConfig.replace(/keystore_file = ''/g, `keystore_file = "${KEYSTORE_FILE_PATH}"`)  
+  
+  // write to a folder we can write to
+  fs.writeFileSync(NEW_CONDUCTOR_CONFIG_PATH, newConductorConfig)
 }
 
+let run
+
 function startConductor() {
-  if (process.platform === "darwin") {
-    run = spawn(path.join(__dirname, "./run-darwin.sh"))
-  } else if (process.platform === "linux") {
-    run = spawn(path.join(__dirname, "./run-linux.sh"))
-  }
-  else {
-    log('error', "unsupported platform: " + process.platform)
-    return
-  }
+  run = spawn(HOLOCHAIN_BIN, ["-c", NEW_CONDUCTOR_CONFIG_PATH])
   run.stdout.on('data', data => {
     log('info', data.toString())
     if (data.toString().indexOf("Done. All interfaces started.") > -1) {
@@ -92,29 +115,28 @@ function startConductor() {
 app.on('ready', function () {
   createWindow()
   // check if config and keys exist, if they don't, create
-  if (fs.existsSync(path.join(__dirname, 'keystore.key'))) {
+  if (fs.existsSync(KEYSTORE_FILE_PATH)) {
     startConductor()
     return
   }
 
-  var setupScript
-  if (process.platform === "darwin") {
-    setupScript = "setup-darwin.sh"
-  } else if (process.platform === "linux") {
-    setupScript = "setup-linux.sh"
-  } else {
-    log('error', "unsupported platform: " + process.platform)
-    return
-  }
-  const setup = spawn(path.join(__dirname, setupScript))
-  setup.stdout.on('data', data => log('info', data.toString()))
+  // TODO: read the public address from the stdout
+  let publicAddress
+  const setup = spawn(HC_BIN, ["keygen", "--path", KEYSTORE_FILE_PATH, "--nullpass", "--quiet"])
+  setup.stdout.on('data', data => {
+    log('info', data.toString())
+    publicAddress = '123'
+  })
+  setup.stderr.on('data', err => {
+    log('error', err.toString())
+  })
   setup.on('exit', (code) => {
     log('info', code)
     if (code === 0 || code === 127) {
       // to avoid rebuilding key-config-gen
       // all the time, according to new DNA address
       // we can just update it after the fact this way
-      updateConductorConfig()
+      updateConductorConfig(publicAddress)
       startConductor()
     } else {
       log('error', 'failed to perform setup')
@@ -126,7 +148,7 @@ app.on('will-quit', (event) => {
   if (!quit) {
     event.preventDefault()
     // SIGTERM by default
-    kill(run.pid, function (err) {
+    run && kill(run.pid, function (err) {
       log('info', 'killed all sub processes')
     })
   }

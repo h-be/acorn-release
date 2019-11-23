@@ -14,7 +14,7 @@ Then package it for your platform
 
 **mac**
 ```
-npm run build-mac
+npm run build-mac-no-sign
 ```
 
 **linux**
@@ -23,6 +23,8 @@ npm run build-linux
 ```
 
 ## Update acorn version
+
+Make sure you're in a terminal with access to `node`, as well as the `hc` command line tools, for `hc package`. This is likely a nix-shell.
 
 In order to update the Acorn version that is packaged here, a script is included, just run:
 

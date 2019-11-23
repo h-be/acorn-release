@@ -7,7 +7,8 @@
     "start": "electron .",
     "clean": "./clean.sh",
     "build-clean": "rm keystore.key && rm conductor-config.toml && ./clear-storage.sh",
-    "build-mac": "electron-packager . Acorn --platform=darwin --overwrite",
+    "build-mac": "electron-packager . Acorn --platform=darwin --overwrite --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.type=development --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.appleId $APPLE_ID_EMAIL --osx-notarize.appleIdPassword $APPLE_ID_PASSWORD",
+    "build-mac-no-sign": "electron-packager . Acorn --platform=darwin --overwrite",
     "build-linux": "electron-packager . Acorn --platform=linux --overwrite"
   },
   "repository": "https://github.com/h-be/acorn-release",
@@ -23,6 +24,7 @@
     "electron-context-menu": "^0.12.1",
     "electron-debug": "^3.0.1",
     "electron-log": "^3.0.9",
+    "electron-osx-sign": "^0.4.14",
     "electron-packager": "^14.1.0",
     "fix-path": "^2.1.0",
     "open": "^6.3.0",

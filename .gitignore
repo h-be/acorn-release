@@ -3,8 +3,6 @@ dna
 acorn-hc
 acorn-ui
 storage/**/*
-keystore.key
-conductor-config.toml
 Acorn-darwin-x64/
 
 .DS_Store

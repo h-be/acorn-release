@@ -4,3 +4,5 @@ cd "${DIR}"
 rm keystore.key
 rm conductor-config.toml
 rm -rf ./storage
+rm -rf ./acorn-ui
+rm -rf ./acorn-hc
