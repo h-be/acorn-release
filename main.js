@@ -48,8 +48,8 @@ function createWindow() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1980,
-    height: 1200,
+    width: 1400,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true
     }
