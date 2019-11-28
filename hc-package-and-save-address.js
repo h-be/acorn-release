@@ -4,6 +4,7 @@ const path = require('path')
 
 // call with `which hc`
 const hcPackagePath = process.argv[2]
+console.log('using `hc` binary: ' + hcPackagePath)
 
 const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 
@@ -11,6 +12,7 @@ const run = spawn(hcPackagePath, ["package"], {
   cwd: path.join(__dirname, 'acorn-hc'),
 })
 run.stdout.on('data', data => {
+  console.log(data.toString())
   if (data.toString().indexOf("DNA hash: ") > -1) {
     // trim cuts off any whitespace or newlines
     const dnaAddressPath = path.join(__dirname, DNA_ADDRESS_FILE)

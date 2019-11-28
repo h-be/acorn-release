@@ -3,13 +3,9 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd "${DIR}"
 
 rm -rf acorn-ui
-# rm -rf acorn-hc
-rm -rf dna
-mkdir dna
 rm -rf ui
 mkdir ui
-git clone --single-branch --branch electron-fixes --depth=1 https://github.com/h-be/acorn-ui.git
-# git clone --depth=1 https://github.com/h-be/acorn-hc.git
+git clone --single-branch --depth=1 https://github.com/h-be/acorn-ui.git
 
 # we need to configure the hc-web-client initialization to
 # use the right websocket URL
@@ -18,14 +14,10 @@ git clone --single-branch --branch electron-fixes --depth=1 https://github.com/h
 # would otherwise use
 sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8888" })/g' ./acorn-ui/src/index.js
 
-# dna
-# save the packaged DNA address to `dna_address`
-node hc-package-and-save-address.js `which hc`
-cp -R ./acorn-hc/dist/. ./dna/
-
 # ui
 cd acorn-ui
 npm install
 npm run build
 cd ..
+# copy all files from the acorn-ui/dist folder into the main ./ui folder
 cp -R ./acorn-ui/dist/. ./ui/
