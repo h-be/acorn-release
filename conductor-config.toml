@@ -34,7 +34,7 @@ id = 'websocket-interface'
 id = 'acorn'
 
 [interfaces.driver]
-port = 8888
+port = 8889
 type = 'websocket'
 
 [logger]

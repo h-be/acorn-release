@@ -12,7 +12,7 @@ git clone --single-branch --depth=1 https://github.com/h-be/acorn-ui.git
 # this is necessary because we are serving a file that's normally served over
 # http, as a file://, breaking the /dna_connections.json endpoint, which it
 # would otherwise use
-sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8888" })/g' ./acorn-ui/src/index.js
+sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8889" })/g' ./acorn-ui/src/index.js
 
 # ui
 cd acorn-ui
