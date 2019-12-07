@@ -6,7 +6,6 @@
   "scripts": {
     "start": "electron .",
     "clean": "./clean.sh",
-    "build-clean": "rm keystore.key && rm conductor-config.toml && ./clear-storage.sh",
     "build-mac": "electron-packager . Acorn --platform=darwin --overwrite --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.type=development --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.appleId $APPLE_ID_EMAIL --osx-notarize.appleIdPassword $APPLE_ID_PASSWORD",
     "build-mac-no-sign": "electron-packager . Acorn --platform=darwin --overwrite",
     "build-linux": "electron-packager . Acorn --platform=linux --overwrite"
