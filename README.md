@@ -3,10 +3,14 @@
 ## Package It (For Developers)
 
 To package, open a terminal @ acorn-release
-`npm install`
+```
+npm install
+```
 
 For mac presently, though adjustments for linux can easily be made:
-`nix-shell --run acorn-release`
+```
+nix-shell --run acorn-release
+```
 
 This will produce an Acorn.app file within `Acorn-darwin-x64` folder. This can be zipped and shared.
 
