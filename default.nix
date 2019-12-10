@@ -18,6 +18,8 @@ let
  ) { config = config; };
  # END HOLONIX IMPORT BOILERPLATE
 
+ target-os = if holonix.pkgs.stdenv.isDarwin then "darwin" else "linux";
+
 in
 with holonix.pkgs;
 {
@@ -56,6 +58,8 @@ with holonix.pkgs;
    holonix.pkgs.at-spi2-core
    holonix.pkgs.cups
   ]}"
+  ln -sf ${holonix.holochain.holochain}/bin/holochain holochain-${target-os}
+  ln -sf ${holonix.holochain.hc}/bin/hc hc-${target-os}
   ''
   holonix.shell.shellHook
   ];
@@ -75,6 +79,8 @@ with holonix.pkgs;
 
    (holonix.pkgs.writeShellScriptBin "acorn-build" ''
    electron-packager . Acorn --platform=linux --overwrite
+   patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
+   patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
    '')
    ]
    ++ holonix.shell.buildInputs

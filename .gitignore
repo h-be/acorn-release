@@ -6,6 +6,7 @@ acorn-ui
 storage/**/*
 Acorn-darwin-x64/
 Acorn-linux-x64/
+holochain-linux
 
 .DS_Store
 **/.DS_Store
