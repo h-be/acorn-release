@@ -5,6 +5,7 @@ acorn-hc
 acorn-ui
 storage/**/*
 Acorn-darwin-x64/
+Acorn-linux-x64/
 
 .DS_Store
 **/.DS_Store
