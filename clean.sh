@@ -6,3 +6,4 @@ rm -rf ./acorn-ui
 rm -rf ./acorn-hc
 rm -rf ./Acorn-darwin-x64
 rm -rf ./Acorn-linux-x64
+rm -rf $HOME/.config/Acorn

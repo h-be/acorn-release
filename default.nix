@@ -70,6 +70,8 @@ with holonix.pkgs;
    holonix.pkgs.glib
 
    (holonix.pkgs.writeShellScriptBin "acorn" ''
+   ./update-dna-version.sh
+   ./update-ui-version.sh
    ${holonix.pkgs.electron_6}/bin/electron .
    '')
 
