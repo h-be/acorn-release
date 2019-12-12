@@ -83,6 +83,13 @@ with holonix.pkgs;
    electron-packager . Acorn --platform=linux --overwrite
    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
    patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
+   chmod +x ./Acorn-linux-x64/Acorn
+   '')
+
+   (holonix.pkgs.writeShellScriptBin "acorn-built" ''
+   # sudo chown root:root ./Acorn-linux-x64/chrome-sandbox
+   # sudo chmod 4755 ./Acorn-linux-x64/chrome-sandbox
+   LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD/Acorn-linux-x64" ./Acorn-linux-x64/Acorn
    '')
    ]
    ++ holonix.shell.buildInputs
