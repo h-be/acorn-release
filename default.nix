@@ -84,10 +84,10 @@ with holonix.pkgs;
    '')
 
    (holonix.pkgs.writeShellScriptBin "acorn-build" ''
-    # acorn-update-deps
+    acorn-update-deps
     electron-packager . Acorn --all --overwrite
-    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
-    patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
+    # patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
+    # patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
     chmod +x ./Acorn-linux-x64/Acorn
    '')
 
