@@ -69,10 +69,14 @@ with holonix.pkgs;
    holonix.pkgs.unzip
    holonix.pkgs.glib
 
+   (holonix.pkgs.writeShellScriptBin "acorn-update-deps" ''
+    ./update-dna-version.sh
+    ./update-ui-version.sh
+   '')
+
    (holonix.pkgs.writeShellScriptBin "acorn" ''
-   ./update-dna-version.sh
-   ./update-ui-version.sh
-   ${holonix.pkgs.electron_6}/bin/electron .
+    acorn-update-deps
+    ${holonix.pkgs.electron_6}/bin/electron .
    '')
 
    (holonix.pkgs.writeShellScriptBin "acorn-clean" ''
@@ -80,16 +84,18 @@ with holonix.pkgs;
    '')
 
    (holonix.pkgs.writeShellScriptBin "acorn-build" ''
-   electron-packager . Acorn --platform=linux --overwrite
-   patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
-   patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
-   chmod +x ./Acorn-linux-x64/Acorn
+    # acorn-update-deps
+    electron-packager . Acorn --all --overwrite
+    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
+    patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
+    chmod +x ./Acorn-linux-x64/Acorn
    '')
 
    (holonix.pkgs.writeShellScriptBin "acorn-built" ''
    # sudo chown root:root ./Acorn-linux-x64/chrome-sandbox
    # sudo chmod 4755 ./Acorn-linux-x64/chrome-sandbox
-   LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD/Acorn-linux-x64" ./Acorn-linux-x64/Acorn
+   # LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD/Acorn-linux-x64" ./Acorn-linux-x64/Acorn
+   ./Acorn-linux-x64/Acorn
    '')
    ]
    ++ holonix.shell.buildInputs
