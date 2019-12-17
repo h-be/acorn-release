@@ -1,6 +1,7 @@
 { pkgs }:
 let
  update-deps = (pkgs.writeShellScriptBin "acorn-update-deps" ''
+  ${pkgs.nodejs}/bin/npm install
   ./update-dna-version.sh
   ./update-ui-version.sh
  '');
