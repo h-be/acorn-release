@@ -68,29 +68,6 @@ with holonix.pkgs;
    holonix.pkgs.nodejs
    holonix.pkgs.unzip
    holonix.pkgs.glib
-
-   (holonix.pkgs.writeShellScriptBin "acorn-update-deps" ''
-    ./update-dna-version.sh
-    ./update-ui-version.sh
-   '')
-
-   (holonix.pkgs.writeShellScriptBin "acorn" ''
-    acorn-update-deps
-    ${holonix.pkgs.electron_6}/bin/electron .
-   '')
-
-   (holonix.pkgs.writeShellScriptBin "acorn-clean" ''
-   ./clean.sh
-   '')
-
-   (holonix.pkgs.writeShellScriptBin "acorn-build" ''
-    set -euxo pipefail
-    acorn_platform=''${1:-linux}
-    acorn_arch=''${2:-x64}
-    acorn-update-deps
-    electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite
-    chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
-   '')
    ]
    ++ holonix.shell.buildInputs
    ++ config.buildInputs
