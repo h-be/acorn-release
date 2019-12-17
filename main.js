@@ -1,5 +1,3 @@
-console.log('foozo')
-
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu } = require('electron')
 const spawn = require('child_process').spawn
@@ -10,9 +8,7 @@ const { log } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
-require('electron-debug')()
-
-console.log('bar')
+// require('electron-debug')()
 
 const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 
@@ -29,19 +25,10 @@ const STORAGE_PATH = path.join(CONFIG_PATH, 'storage')
 const NEW_CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, CONDUCTOR_CONFIG_FILE)
 const KEYSTORE_FILE_PATH = path.join(CONFIG_PATH, KEYSTORE_FILE)
 
-console.log('config path', CONFIG_PATH)
-console.log('keystore file', KEYSTORE_FILE)
-console.log('conductor config file', CONDUCTOR_CONFIG_FILE)
-console.log('storage path', STORAGE_PATH)
-console.log('new conductor config path', NEW_CONDUCTOR_CONFIG_PATH)
-console.log('keystore file path', KEYSTORE_FILE_PATH)
-
 if(!fs.existsSync(CONFIG_PATH)) {
-  console.log('creating config at ' + CONFIG_PATH)
   fs.mkdirSync(CONFIG_PATH)
 }
 if(!fs.existsSync(STORAGE_PATH)) {
-  console.log('creating storage at ' + STORAGE_PATH)
   fs.mkdirSync(STORAGE_PATH)
 }
 
@@ -57,11 +44,7 @@ if (process.platform === "darwin") {
   return
 }
 
-console.log('HC_BIN', HC_BIN)
-console.log('HOLOCHAIN_BIN', HOLOCHAIN_BIN)
-
 function createWindow() {
-  console.log('createWindow')
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -90,7 +73,6 @@ function createWindow() {
 // overwrite the DNA hash address in the conductor-config
 // with the up to date one
 function updateConductorConfig(publicAddress) {
-  console.log('updateConductorConfig')
   const dnaAddress = fs.readFileSync(path.join(__dirname, DNA_ADDRESS_FILE))
   // read from the local template
   const origConductorConfigPath = path.join(__dirname, CONDUCTOR_CONFIG_FILE)
@@ -112,7 +94,6 @@ function updateConductorConfig(publicAddress) {
 let run
 
 function startConductor() {
-  console.log('startConductor')
   run = spawn(HOLOCHAIN_BIN, ["-c", NEW_CONDUCTOR_CONFIG_PATH], {
     cwd: __dirname
   })
@@ -140,7 +121,6 @@ function startConductor() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
-  console.log('ready')
   createWindow()
   // check if config and keys exist, if they don't, create
   if (fs.existsSync(KEYSTORE_FILE_PATH)) {
@@ -176,7 +156,6 @@ app.on('ready', function () {
 })
 
 app.on('will-quit', (event) => {
-  console.log('will-quit')
   if (!quit) {
     event.preventDefault()
     // SIGTERM by default
@@ -188,14 +167,12 @@ app.on('will-quit', (event) => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  console.log('window-all-closed')
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('activate', function () {
-  console.log('activate')
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
@@ -226,4 +203,3 @@ const menutemplate = [{
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menutemplate))
-console.log('eof')
