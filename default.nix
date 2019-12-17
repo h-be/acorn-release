@@ -84,18 +84,12 @@ with holonix.pkgs;
    '')
 
    (holonix.pkgs.writeShellScriptBin "acorn-build" ''
+    set -euxo pipefail
+    acorn_platform=''${1:-linux}
+    acorn_arch=''${2:-x64}
     acorn-update-deps
-    electron-packager . Acorn --all --overwrite
-    # patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./Acorn-linux-x64/Acorn
-    # patchelf --shrink-rpath ./Acorn-linux-x64/Acorn
-    chmod +x ./Acorn-linux-x64/Acorn
-   '')
-
-   (holonix.pkgs.writeShellScriptBin "acorn-built" ''
-   # sudo chown root:root ./Acorn-linux-x64/chrome-sandbox
-   # sudo chmod 4755 ./Acorn-linux-x64/chrome-sandbox
-   # LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$PWD/Acorn-linux-x64" ./Acorn-linux-x64/Acorn
-   ./Acorn-linux-x64/Acorn
+    electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite
+    chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
    '')
    ]
    ++ holonix.shell.buildInputs
