@@ -26,18 +26,18 @@ Pick a workflow that you like and stick with it.
 Note that if you aren't using nix you need to _manually_ keep the following up
 to date locally in your development environment:
 
-- `npm` versions
+- `node` and `npm` versions
 - `hc` and `holochain` binaries
 - shared library versions/dependencies
 
 #### Mac OS X
 
-- Install `npm` 12+ globally somehow (check version with `npm --version`)
+- Install `node` 12+ globally somehow (check version with `node --version`)
 - Copy or symlink `hc` and `holochain` into the repo as `hc-darwin` and `holochain-darwin`
 
 #### Ubuntu
 
-- Install `npm` 12+ globally somehow (check version with `npm --version`)
+- Install `node` 12+ globally somehow (check version with `node --version`)
 - Copy or symlink `hc` and `holochain` into the repo as `hc-linux` and `holochain-linux`
 - Run `./ubuntu-deps.sh` to ensure all shared libs are installed globally
 
