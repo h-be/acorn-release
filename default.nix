@@ -18,8 +18,6 @@ let
  ) { config = config; };
  # END HOLONIX IMPORT BOILERPLATE
 
- target-os = if holonix.pkgs.stdenv.isDarwin then "darwin" else "linux";
-
 in
 with holonix.pkgs;
 {
