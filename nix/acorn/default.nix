@@ -14,6 +14,7 @@ let
   acorn_platform=''${1:-linux}
   acorn_arch=''${2:-x64}
   ${update-deps}/bin/acorn-update-deps
+  ./clean.sh
   electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite
   chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
  '');

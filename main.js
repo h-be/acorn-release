@@ -32,17 +32,8 @@ if(!fs.existsSync(STORAGE_PATH)) {
   fs.mkdirSync(STORAGE_PATH)
 }
 
-let HC_BIN, HOLOCHAIN_BIN
-if (process.platform === "darwin") {
-  HC_BIN = "./hc-darwin"
-  HOLOCHAIN_BIN = "./holochain-darwin"
-} else if (process.platform === "linux") {
-  HC_BIN = "./hc-linux"
-  HOLOCHAIN_BIN = "./holochain-linux"
-} else {
-  log('error', "unsupported platform: " + process.platform)
-  return
-}
+let HC_BIN = './hc'
+let HOLOCHAIN_BIN = './holochain'
 
 function createWindow() {
 

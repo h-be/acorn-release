@@ -58,8 +58,8 @@ with holonix.pkgs;
    holonix.pkgs.at-spi2-core
    holonix.pkgs.cups
   ]}"
-  ln -sf ${holonix.holochain.holochain}/bin/holochain holochain-${target-os}
-  ln -sf ${holonix.holochain.hc}/bin/hc hc-${target-os}
+  ln -sf ${holonix.holochain.holochain}/bin/holochain holochain
+  ln -sf ${holonix.holochain.hc}/bin/hc hc
   ''
   holonix.shell.shellHook
   ];

@@ -33,12 +33,12 @@ to date locally in your development environment:
 #### Mac OS X
 
 - Install `node` 12+ globally somehow (check version with `node --version`)
-- Copy or symlink `hc` and `holochain` into the repo as `hc-darwin` and `holochain-darwin`
+- Copy or symlink `hc` and `holochain` into the repo as `hc` and `holochain`
 
 #### Ubuntu
 
 - Install `node` 12+ globally somehow (check version with `node --version`)
-- Copy or symlink `hc` and `holochain` into the repo as `hc-linux` and `holochain-linux`
+- Copy or symlink `hc` and `holochain` into the repo as `hc` and `holochain`
 - Run `./ubuntu-deps.sh` to ensure all shared libs are installed globally
 
 #### Nix

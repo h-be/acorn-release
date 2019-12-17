@@ -13,8 +13,8 @@ storage/**/*
 Acorn-*
 
 # symlinked/copied binaries
-hc-*
-holochain-*
+hc
+holochain
 
 .DS_Store
 **/.DS_Store
