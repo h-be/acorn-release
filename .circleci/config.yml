@@ -1,6 +1,6 @@
 version: 2.1
 
-commands:
+jobs:
  test-linux:
   description: "Tests for linux"
   docker:
