@@ -1,10 +1,20 @@
 .cargo
+
+# build dependencies
 ui
 dna
 acorn-hc
 acorn-ui
+
+# runtime data
 storage/**/*
-Acorn-darwin-x64/
+
+# electron-packager folders
+Acorn-*
+
+# symlinked/copied binaries
+hc
+holochain
 
 .DS_Store
 **/.DS_Store

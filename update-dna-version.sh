@@ -9,5 +9,5 @@ git clone --depth=1 https://github.com/h-be/acorn-hc.git
 
 # dna
 # save the packaged DNA address to `dna_address`
-node hc-package-and-save-address.js `which hc`
+node hc-package-and-save-address.js "$PWD/hc"
 cp -R ./acorn-hc/dist/. ./dna/

@@ -8,7 +8,7 @@
     "clean": "./clean.sh",
     "build-mac": "electron-packager . Acorn --platform=darwin --overwrite --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.type=development --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.appleId $APPLE_ID_EMAIL --osx-notarize.appleIdPassword $APPLE_ID_PASSWORD",
     "build-mac-no-sign": "electron-packager . Acorn --platform=darwin --overwrite",
-    "build-linux": "electron-packager . Acorn --platform=linux --overwrite"
+    "build-linux": "electron-packager . Acorn --platform=linux --arch=x64 --overwrite"
   },
   "repository": "https://github.com/h-be/acorn-release",
   "keywords": [

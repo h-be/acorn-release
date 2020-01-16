@@ -1,0 +1,30 @@
+version: 2.1
+
+jobs:
+ test-linux:
+  description: "Tests for linux"
+  docker:
+   - image: holochain/holonix:latest
+  steps:
+   - checkout
+   - run: nix-shell --run echo
+
+ test-darwin:
+  description: "Tests for darwin"
+  macos:
+   xcode: "11.3"
+  steps:
+   - checkout
+   - run:
+      command: |
+       curl https://nixos.org/nix/install | sh
+       ./Users/distiller/.nix-profile/etc/profile.d/nix.sh
+       nix-shell --run echo
+
+workflows:
+ version: 2.1
+ tests:
+  jobs:
+   - test-linux
+   # @todo get a mac plan for circle
+   # - test-darwin

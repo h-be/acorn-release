@@ -32,17 +32,8 @@ if(!fs.existsSync(STORAGE_PATH)) {
   fs.mkdirSync(STORAGE_PATH)
 }
 
-let HC_BIN, HOLOCHAIN_BIN
-if (process.platform === "darwin") {
-  HC_BIN = "./hc-darwin"
-  HOLOCHAIN_BIN = "./holochain-darwin"
-} else if (process.platform === "linux") {
-  HC_BIN = "./hc-linux"
-  HOLOCHAIN_BIN = "./holochain-linux"
-} else {
-  log('error', "unsupported platform: " + process.platform)
-  return
-}
+let HC_BIN = './hc'
+let HOLOCHAIN_BIN = './holochain'
 
 function createWindow() {
 
@@ -86,7 +77,7 @@ function updateConductorConfig(publicAddress) {
   newConductorConfig = newConductorConfig.replace(/keystore_file = ''/g, `keystore_file = "${KEYSTORE_FILE_PATH}"`)
   // replace pickle db storage path
   newConductorConfig = newConductorConfig.replace(/path = 'picklepath'/g, `path = "${STORAGE_PATH}"`)
-  
+
   // write to a folder we can write to
   fs.writeFileSync(NEW_CONDUCTOR_CONFIG_PATH, newConductorConfig)
 }
