@@ -22,7 +22,7 @@ dna = 'hc-run-dna'
 id = 'acorn'
 
 [instances.storage]
-type = 'pickle'
+type = 'lmdb'
 # to replace
 path = 'picklepath'
 

@@ -5,7 +5,7 @@ cd "${DIR}"
 rm -rf acorn-ui
 rm -rf ui
 mkdir ui
-git clone --single-branch --depth=1 https://github.com/h-be/acorn-ui.git
+git clone --single-branch --branch=master --depth=1 https://github.com/h-be/acorn-ui.git
 
 # we need to configure the hc-web-client initialization to
 # use the right websocket URL
