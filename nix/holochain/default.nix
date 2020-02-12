@@ -6,7 +6,7 @@ let
   ./update-dna-version.sh
   ./update-ui-version.sh
   ./clean.sh
-  npm run build-mac-no-sign
+  npm run build-mac
   '';
 in
 {
