@@ -9,7 +9,7 @@ let
   mkdir dna
   mv acorn.dna.json dna/acorn-hc.dna.json
   # hash the dna, and pipe the cleaned output into the gitignored dna_address file
-  hc hash --path dna/acorn-hc.dna.json | tr '\n' ' ' | cut -c 50-95 > dna_address
+  hc hash --path dna/acorn-hc.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
  '');
 
  bundle-ui = (pkgs.writeShellScriptBin "acorn-bundle-ui" ''
