@@ -27,8 +27,10 @@ It needs to know which versions you want to be running or packaging.
 
 #### acorn-hc
 
-You can pass in a version number of an acorn-hc release, like 0.0.2
-`nix-shell --run acorn-bundle-dna x.y.z`
+You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.0.2
+```bash
+nix-shell --run acorn-bundle-dna x.y.z
+```
 
 This will result in there being
 
@@ -37,12 +39,14 @@ This will result in there being
 
 #### acorn-ui
 
-It currently just pulls the latest from the `master` branch of `acorn-ui`,
+It currently just pulls the latest from the `master` branch of [acorn-ui](https://github.com/h-be/acorn-ui),
 but that will be updated to make it taggable at specific versions,
-once `acorn-ui` has its own release and upload process.
+once [acorn-ui](https://github.com/h-be/acorn-ui) has its own release and upload process.
 
 Just run
-`nix-shell --run acorn-bundle-ui`
+```bash
+nix-shell --run acorn-bundle-ui
+```
 
 This will result in there being a `ui` folder locally, which contains all the html/css/js files for the user interface.
 
@@ -132,4 +136,4 @@ nix-shell --run "acorn-build $platform $arch"
 
 ## License
 
-This project is licensed under the CAL-1.0 Beta 4
+This project is licensed under the CAL-1.0 Beta 4, see [LICENSE.md](./LICENSE.md) for details.
