@@ -58,8 +58,6 @@ with holonix.pkgs;
   ${holonix.pkgs.nodejs}/bin/npm install
   export PATH="$PATH:$( ${holonix.pkgs.nodejs}/bin/npm bin )"
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"${holonix.pkgs.stdenv.lib.makeLibraryPath libs}"
-  ln -sf ${holonix.holochain.holochain}/bin/holochain holochain
-  ln -sf ${holonix.holochain.hc}/bin/hc hc
   ''
   holonix.shell.shellHook
   ];

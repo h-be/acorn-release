@@ -15,7 +15,7 @@ storage/**/*
 # electron-packager folders
 Acorn-*
 
-# symlinked/copied binaries
+# copied binaries
 hc
 holochain
 

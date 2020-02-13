@@ -54,22 +54,42 @@ let
   ${clean}/bin/acorn-clean
  '');
 
+ fetch-bins = (pkgs.writeShellScriptBin "acorn-fetch-bins" ''
+  set -euxo pipefail
+  echo 'fetching package-able holochain and hc binaries'
+  echo 'this command expects apple-darwin or generic-linux-gnu to be passed as first argument'
+  echo 'this command optionally can be passed holochain-rust tag as second argument'
+  PLATFORM=''${1}
+  VERSION=''${2:-v0.0.42-alpha5}
+  HC=cli-$VERSION-x86_64-$PLATFORM.tar.gz
+  HOLOCHAIN=holochain-$VERSION-x86_64-$PLATFORM.tar.gz
+  curl -O -L https://github.com/holochain/holochain-rust/releases/download/$VERSION/$HC
+  curl -O -L https://github.com/holochain/holochain-rust/releases/download/$VERSION/$HOLOCHAIN
+  tar -xzvf $HC ./hc
+  tar -xzvf $HOLOCHAIN ./holochain
+  rm $HC
+  rm $HOLOCHAIN
+ '');
+
  build-linux = (pkgs.writeShellScriptBin "acorn-build-linux" ''
   ${pre-build}/bin/acorn-pre-build
   acorn_platform=''${1:-linux}
   acorn_arch=''${2:-x64}
+  ${fetch-bins}/bin/acorn-fetch-bins generic-linux-gnu
   electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite --prune=true
   chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
  '');
 
  build-mac = (pkgs.writeShellScriptBin "acorn-build-mac" ''
   ${pre-build}/bin/acorn-pre-build
+  ${fetch-bins}/bin/acorn-fetch-bins apple-darwin
   electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\" --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.entitlements-inherit=entitlements.mac.plist --osx-sign.type=distribution --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.apple-id=\"$APPLE_ID_EMAIL\" --osx-notarize.apple-id-password=\"$APPLE_ID_PASSWORD\"
  '');
 
  build-mac-unsigned = (pkgs.writeShellScriptBin "acorn-build-mac-unsigned" ''
   ${pre-build}/bin/acorn-pre-build
-  electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\"
+  ${fetch-bins}/bin/acorn-fetch-bins apple-darwin
+  # electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\"
  '');
 
  acorn = (pkgs.writeShellScriptBin "acorn" ''
