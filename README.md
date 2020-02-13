@@ -1,5 +1,7 @@
 # acorn-release
 
+A distributable version of the peer-to-peer [Acorn](https://github.com/h-be/acorn-docs) [holochain](https://holochain.org) system packaged as a native application for Linux and Mac.
+
 ## Building and running Acorn 🎉
 
 Acorn can be built and run on:
@@ -83,6 +85,7 @@ This will produce an Acorn.app file within `Acorn-$platform-$arch` folder. This 
 ##### Mac
 
 **Signed and Notarized (Distribute as a Verified Developer)**
+
 To create a codesigned and notarized build depends on having purchased an Apple developer account and acquiring Apple Developer Certificates, so you will need to have special access to those to make this process work.
 
 Set the following environment variables, before running the following.
@@ -106,6 +109,7 @@ DEBUG=electron-osx-sign*,electron-osx-notarize*
 This relates to the nodejs/npm package [debug](https://www.npmjs.com/package/debug).
 
 **Unsigned (Distribute as an Unverified Developer)**
+
 This version will require the special step that Mac Gatekeeper enforces, which is to allow unverified apps generally,
 or to allow this specific app. This can be done by holding `ctrl` and clicking on the `Acorn` application,
 and then clicking `Open`, and then `Open` when it asks about the Unidentified Developer.
@@ -130,9 +134,9 @@ nix-shell --run "acorn-build $platform $arch"
 
 ## Authors
 
-**Connor Turland** [Connoropolous](https://github.com/Connoropolous)
-**David Meister**
-**Sam Cooley**
+* **Connor Turland** [Connoropolous](https://github.com/Connoropolous)
+* **David Meister**
+* **Sam Cooley**
 
 ## License
 
