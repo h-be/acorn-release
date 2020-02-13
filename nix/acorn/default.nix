@@ -58,7 +58,7 @@ let
   ${pre-build}/bin/acorn-pre-build
   acorn_platform=''${1:-linux}
   acorn_arch=''${2:-x64}
-  electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite
+  electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite --prune=true
   chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
  '');
 
