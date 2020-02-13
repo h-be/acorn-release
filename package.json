@@ -4,11 +4,7 @@
   "description": "A Holochain State of Affairs Tree application",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "clean": "./clean.sh",
-    "build-mac": "electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\" --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.entitlements-inherit=entitlements.mac.plist --osx-sign.type=distribution --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.apple-id=\"$APPLE_ID_EMAIL\" --osx-notarize.apple-id-password=\"$APPLE_ID_PASSWORD\"",
-    "build-mac-no-sign": "electron-packager . Acorn --platform=darwin --overwrite",
-    "build-linux": "electron-packager . Acorn --platform=linux --arch=x64 --overwrite"
+    "start": "electron ."
   },
   "repository": "https://github.com/h-be/acorn-release",
   "keywords": [
