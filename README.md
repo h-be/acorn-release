@@ -1,5 +1,7 @@
 # acorn-release
 
+A distributable version of the peer-to-peer [Acorn](https://github.com/h-be/acorn-docs) [holochain](https://holochain.org) system packaged as a native application for Linux and Mac.
+
 ## Building and running Acorn 🎉
 
 Acorn can be built and run on:
@@ -12,8 +14,7 @@ It can't run on Windows because holochain conductors don't run on Windows (yet).
 
 High level, there are a few ways to interact with Acorn from this repo:
 
-- Run it directly via. an existing `electron` installation on the current machine
-- Run it via. a "packaged" electron installation built with `electron-packager`
+- Run it via a "packaged" electron installation built with `electron-packager`
 - Built an aforementioned package for some target platform with `electron-packager`
 
 The different interactions work differently across mac/ubuntu/nix and generally
@@ -21,38 +22,37 @@ are NOT compatible with each other.
 
 Pick a workflow that you like and stick with it.
 
-### Prework
+### Bundling in versions of acorn-hc and acorn-ui
 
-Note that if you aren't using nix you need to _manually_ keep the following up
-to date locally in your development environment:
+These will need to be run, before other commands like "running" and "packaging" will succeed.
+It needs to know which versions you want to be running or packaging.
 
-- `node` and `npm` versions
-- `hc` and `holochain` binaries
-- shared library versions/dependencies
+#### acorn-hc
 
-#### Mac OS X
+You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.0.2
+```bash
+nix-shell --run acorn-bundle-dna x.y.z
+```
 
-- Install `node` 12+ globally somehow (check version with `node --version`)
-- Copy or symlink `hc` and `holochain` into the repo as `hc` and `holochain`
+This will result in there being
 
-#### Ubuntu
+1. a `dna_address` file with the address/hash of the DNA for this release
+2. a `dna/acorn-hc.dna.json` file which contains the WASM and full DNA contents
 
-- Install `node` 12+ globally somehow (check version with `node --version`)
-- Copy or symlink `hc` and `holochain` into the repo as `hc` and `holochain`
-- Run `./ubuntu-deps.sh` to ensure all shared libs are installed globally
+#### acorn-ui
 
-#### Nix
+It currently just pulls the latest from the `master` branch of [acorn-ui](https://github.com/h-be/acorn-ui),
+but that will be updated to make it taggable at specific versions,
+once [acorn-ui](https://github.com/h-be/acorn-ui) has its own release and upload process.
 
-Nothing :)
+Just run
+```bash
+nix-shell --run acorn-bundle-ui
+```
 
-### Running acorn directly
+This will result in there being a `ui` folder locally, which contains all the html/css/js files for the user interface.
 
-#### Mac OS X & Linux
-
-- Run `./clean.sh`
-- Run `npm install` from this repo
-- Run `./update-dna-version.sh` and `./update-ui-version.sh`
-- Run `npm start`
+### Running Acorn directly
 
 #### Nix
 
@@ -80,21 +80,64 @@ This will produce an Acorn.app file within `Acorn-$platform-$arch` folder. This 
 
 `main.js` is a primary point of development.
 
-#### Mac OS X & Linux
-
-- Run `./clean.sh`
-- Run `npm install` from this repo
-- Run `./update-dna-version.sh` and `./update-ui-version.sh`
-- Run `npm-build-mac` or `npm-build-linux`
-
 #### Nix
 
-- Run `nix-shell --run acorn-build` for linux defaults or `nix-shell --run "acorn $platform $arch"`
+##### Mac
+
+**Signed and Notarized (Distribute as a Verified Developer)**
+
+To create a codesigned and notarized build depends on having purchased an Apple developer account and acquiring Apple Developer Certificates, so you will need to have special access to those to make this process work.
+
+Set the following environment variables, before running the following.
+
+```
+APPLE_DEV_IDENTITY=Developer ID Application: Happy Coders, Inc. (XYZABCNOP)
+APPLE_ID_EMAIL=appledeveloperaccount@hAPPy-coders.com
+APPLE_ID_PASSWORD=...
+```
+
+```
+nix-shell --run acorn-build-mac
+```
+
+To get extra details on this build process, or to debug, set the following environment variable:
+
+```
+DEBUG=electron-osx-sign*,electron-osx-notarize*
+```
+
+This relates to the nodejs/npm package [debug](https://www.npmjs.com/package/debug).
+
+**Unsigned (Distribute as an Unverified Developer)**
+
+This version will require the special step that Mac Gatekeeper enforces, which is to allow unverified apps generally,
+or to allow this specific app. This can be done by holding `ctrl` and clicking on the `Acorn` application,
+and then clicking `Open`, and then `Open` when it asks about the Unidentified Developer.
+
+```
+nix-shell --run acorn-build-mac-unsigned
+```
+
+##### Linux
+
+For linux defaults, run
+
+```
+nix-shell --run acorn-build-linux
+```
+
+or for specific linux platform or arch
+
+```
+nix-shell --run "acorn-build $platform $arch"
+```
 
 ## Authors
 
-**Connor Turland** [Connoropolous](https://github.com/Connoropolous)
+* **Connor Turland** [Connoropolous](https://github.com/Connoropolous)
+* **David Meister**
+* **Sam Cooley**
 
 ## License
 
-This project is licensed under the GPL-3 License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the CAL-1.0 Beta 4, see [LICENSE.md](./LICENSE.md) for details.

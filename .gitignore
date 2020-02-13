@@ -6,6 +6,9 @@ dna
 acorn-hc
 acorn-ui
 
+# build generated
+dna_address
+
 # runtime data
 storage/**/*
 
