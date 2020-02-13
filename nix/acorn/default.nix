@@ -48,21 +48,28 @@ let
   rm -rf ./node_modules
  '');
 
- build-linux = (pkgs.writeShellScriptBin "acorn-build-linux" ''
+ pre-build = (pkgs.writeShellScriptBin "acorn-pre-build" ''
   ${pkgs.nodejs}/bin/npm install
   set -euxo pipefail
+  ${clean}/bin/acorn-clean
+ '');
+
+ build-linux = (pkgs.writeShellScriptBin "acorn-build-linux" ''
+  ${pre-build}/bin/acorn-pre-build
   acorn_platform=''${1:-linux}
   acorn_arch=''${2:-x64}
-  ${clean}/bin/acorn-clean
   electron-packager . Acorn --platform=$acorn_platform --arch=$acorn_arch --overwrite
   chmod +x ./Acorn-$acorn_platform-$acorn_arch/Acorn
  '');
 
  build-mac = (pkgs.writeShellScriptBin "acorn-build-mac" ''
-  ${pkgs.nodejs}/bin/npm install
-  set -euxo pipefail
-  ${clean}/bin/acorn-clean
+  ${pre-build}/bin/acorn-pre-build
   electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\" --osx-sign.hardenedRuntime=true --osx-sign.gatekeeperAssess=false --osx-sign.entitlements=entitlements.mac.plist --osx-sign.entitlements-inherit=entitlements.mac.plist --osx-sign.type=distribution --osx-sign.identity=\"$APPLE_DEV_IDENTITY\" --osx-notarize.apple-id=\"$APPLE_ID_EMAIL\" --osx-notarize.apple-id-password=\"$APPLE_ID_PASSWORD\"
+ '');
+
+ build-mac-unsigned = (pkgs.writeShellScriptBin "acorn-build-mac-unsigned" ''
+  ${pre-build}/bin/acorn-pre-build
+  electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\"
  '');
 
  acorn = (pkgs.writeShellScriptBin "acorn" ''
@@ -78,6 +85,7 @@ in
   reset
   build-linux
   build-mac
+  build-mac-unsigned
   acorn
  ];
 }

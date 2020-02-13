@@ -22,8 +22,8 @@ Pick a workflow that you like and stick with it.
 
 ### Bundling in versions of acorn-hc and acorn-ui
 
-These will need to be run, before other commands will succeed.
-It needs to know which versions you want to be packaging.
+These will need to be run, before other commands like "running" and "packaging" will succeed.
+It needs to know which versions you want to be running or packaging.
 
 #### acorn-hc
 
@@ -76,8 +76,53 @@ This will produce an Acorn.app file within `Acorn-$platform-$arch` folder. This 
 
 #### Nix
 
-- For Mac, run `nix-shell --run acorn-release`, this depends on Apple Developer Certificates, so you will need to have special privileges to make this process work
-- For linux, run `nix-shell --run acorn-build` for linux defaults or `nix-shell --run "acorn-build $platform $arch"`
+##### Mac
+
+**Signed and Notarized (Distribute as a Verified Developer)**
+To create a codesigned and notarized build depends on having purchased an Apple developer account and acquiring Apple Developer Certificates, so you will need to have special access to those to make this process work.
+
+Set the following environment variables, before running the following.
+
+```
+APPLE_DEV_IDENTITY=Developer ID Application: Happy Coders, Inc. (XYZABCNOP)
+APPLE_ID_EMAIL=appledeveloperaccount@hAPPy-coders.com
+APPLE_ID_PASSWORD=...
+```
+
+```
+nix-shell --run acorn-build-mac
+```
+
+To get extra details on this build process, or to debug, set the following environment variable:
+
+```
+DEBUG=electron-osx-sign*,electron-osx-notarize*
+```
+
+This relates to the nodejs/npm package [debug](https://www.npmjs.com/package/debug).
+
+**Unsigned (Distribute as an Unverified Developer)**
+This version will require the special step that Mac Gatekeeper enforces, which is to allow unverified apps generally,
+or to allow this specific app. This can be done by holding `ctrl` and clicking on the `Acorn` application,
+and then clicking `Open`, and then `Open` when it asks about the Unidentified Developer.
+
+```
+nix-shell --run acorn-build-mac-unsigned
+```
+
+##### Linux
+
+For linux defaults, run
+
+```
+nix-shell --run acorn-build-linux
+```
+
+or for specific linux platform or arch
+
+```
+nix-shell --run "acorn-build $platform $arch"
+```
 
 ## Authors
 
