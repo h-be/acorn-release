@@ -89,7 +89,7 @@ let
  build-mac-unsigned = (pkgs.writeShellScriptBin "acorn-build-mac-unsigned" ''
   ${pre-build}/bin/acorn-pre-build
   ${fetch-bins}/bin/acorn-fetch-bins apple-darwin
-  # electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\"
+  electron-packager . Acorn --platform=darwin --arch=x64 --overwrite --prune=true --icon=\"ui/logo/acorn-logo-desktop-512px@2x.icns\"
  '');
 
  acorn = (pkgs.writeShellScriptBin "acorn" ''
