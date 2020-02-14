@@ -103,7 +103,7 @@ nix-shell --run acorn-build-mac
 To get extra details on this build process, or to debug, set the following environment variable:
 
 ```
-DEBUG=electron-osx-sign*,electron-osx-notarize*
+DEBUG=electron-osx-sign*,electron-notarize*
 ```
 
 This relates to the nodejs/npm package [debug](https://www.npmjs.com/package/debug).
