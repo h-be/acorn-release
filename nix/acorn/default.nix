@@ -60,7 +60,7 @@ let
   echo 'this command expects apple-darwin or generic-linux-gnu to be passed as first argument'
   echo 'this command optionally can be passed holochain-rust tag as second argument'
   PLATFORM=''${1}
-  VERSION=''${2:-v0.0.42-alpha5}
+  VERSION=''${2:-v0.0.43-alpha3}
   HC=cli-$VERSION-x86_64-$PLATFORM.tar.gz
   HOLOCHAIN=holochain-$VERSION-x86_64-$PLATFORM.tar.gz
   curl -O -L https://github.com/holochain/holochain-rust/releases/download/$VERSION/$HC
