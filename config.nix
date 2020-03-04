@@ -14,6 +14,7 @@
 
    # can be any github ref
    # branch, tag, commit, etc.
+   # holonix v0.0.67=holochain 0.0.44-alpha3
    ref = "v0.0.67";
 
    # the sha of what is downloaded from the above ref
