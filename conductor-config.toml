@@ -12,7 +12,8 @@ name = 'Agent 1'
 # to replace
 public_address = ''
 [[dnas]]
-file = './dna/acorn-hc.dna.json'
+file = './dna/acorn.dna.json'
+# to replace
 hash = ''
 id = 'hc-run-dna'
 
@@ -27,7 +28,7 @@ type = 'lmdb'
 path = 'picklepath'
 
 [[interfaces]]
-admin = true
+admin = false
 id = 'websocket-interface'
 
 [[interfaces.instances]]
@@ -40,9 +41,15 @@ type = 'websocket'
 [logger]
 state_dump = false
 type = 'info'
-
-[logger.rules]
-rules = []
+[[logger.rules.rules]]
+exclude = true
+pattern = '^holochain_core::wasm_engine::api'
+[[logger.rules.rules]]
+exclude = true
+pattern = '^holochain_core::nucleus::reducers::trace_return_hdk_function'
+[[logger.rules.rules]]
+exclude = true
+pattern = '^ws'
 
 [passphrase_service]
 type = 'cmd'
@@ -53,4 +60,7 @@ trace = false
 
 [network]
 type = "sim2h"
-sim2h_url = "ws://sim2h.harris-braun.com:9000/"
+# last two digits of port here
+# are a hidden reference to associated holochain/sim2h
+# release number, e.g. 9044 = 0.0.44
+sim2h_url = "ws://sim2h.harris-braun.com:9044/"

@@ -30,6 +30,7 @@ It needs to know which versions you want to be running or packaging.
 #### acorn-hc
 
 You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.0.2
+
 ```bash
 nix-shell --run acorn-bundle-dna x.y.z
 ```
@@ -37,7 +38,7 @@ nix-shell --run acorn-bundle-dna x.y.z
 This will result in there being
 
 1. a `dna_address` file with the address/hash of the DNA for this release
-2. a `dna/acorn-hc.dna.json` file which contains the WASM and full DNA contents
+2. a `dna/acorn.dna.json` file which contains the WASM and full DNA contents
 
 #### acorn-ui
 
@@ -46,6 +47,7 @@ but that will be updated to make it taggable at specific versions,
 once [acorn-ui](https://github.com/h-be/acorn-ui) has its own release and upload process.
 
 Just run
+
 ```bash
 nix-shell --run acorn-bundle-ui
 ```
@@ -134,9 +136,9 @@ nix-shell --run "acorn-build $platform $arch"
 
 ## Authors
 
-* **Connor Turland** [Connoropolous](https://github.com/Connoropolous)
-* **David Meister**
-* **Sam Cooley**
+- **Connor Turland** [Connoropolous](https://github.com/Connoropolous)
+- **David Meister**
+- **Sam Cooley**
 
 ## License
 

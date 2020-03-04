@@ -8,7 +8,7 @@ const { log } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
-//require('electron-debug')({ isEnabled: true })
+// require('electron-debug')({ isEnabled: true })
 
 const { DNA_ADDRESS_FILE } = require('./dna-address-config')
 
