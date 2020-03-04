@@ -7,9 +7,9 @@ let
   echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.2.0}/acorn.dna.json"
   curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.2.0}/acorn.dna.json
   mkdir dna
-  mv acorn.dna.json dna/acorn-hc.dna.json
+  mv acorn.dna.json dna/acorn.dna.json
   # hash the dna, and pipe the cleaned output into the gitignored dna_address file
-  hc hash --path dna/acorn-hc.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
+  hc hash --path dna/acorn.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
  '');
 
  bundle-ui = (pkgs.writeShellScriptBin "acorn-bundle-ui" ''
@@ -76,12 +76,14 @@ let
   echo 'fixing the dynamic linking of hc and holochain'
   echo 'based on: otool -L hc'
   install_name_tool -change /nix/store/qjf3nf4qa8q62giagjwdmdbjqni983km-Libsystem-osx-10.12.6/lib/libSystem.B.dylib /usr/lib/libSystem.B.dylib hc
+  install_name_tool -change /nix/store/qnzg5xh5qw84gqrhh7aysycp92bxinms-pcre-8.43/lib/libpcre.1.dylib /usr/lib/libpcre.0.dylib hc
   install_name_tool -change /nix/store/qjf3nf4qa8q62giagjwdmdbjqni983km-Libsystem-osx-10.12.6/lib/libresolv.9.dylib /usr/lib/libresolv.9.dylib hc
   # note this is a slight hack, with unforeseen consequences?
   # because its a different lib? libiconv.dylib > libiconv.2.dylib
   install_name_tool -change /nix/store/cib1v4zhizcjwkr96753n87ssm3nsfkm-libiconv-osx-10.12.6/lib/libiconv.dylib /usr/lib/libiconv.2.dylib hc
   echo 'based on: otool -L holochain'
   install_name_tool -change /nix/store/qjf3nf4qa8q62giagjwdmdbjqni983km-Libsystem-osx-10.12.6/lib/libSystem.B.dylib /usr/lib/libSystem.B.dylib holochain
+  install_name_tool -change /nix/store/qnzg5xh5qw84gqrhh7aysycp92bxinms-pcre-8.43/lib/libpcre.1.dylib /usr/lib/libpcre.0.dylib holochain
   install_name_tool -change /nix/store/qjf3nf4qa8q62giagjwdmdbjqni983km-Libsystem-osx-10.12.6/lib/libresolv.9.dylib /usr/lib/libresolv.9.dylib holochain
   # note this is a slight hack, with unforeseen consequences?
   # because its a different lib? libiconv.dylib > libiconv.2.dylib
