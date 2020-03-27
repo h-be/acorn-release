@@ -1,15 +1,19 @@
 { pkgs }:
 let
  bundle-dna = (pkgs.writeShellScriptBin "acorn-bundle-dna" ''
-  rm -rf dna
+  rm -rf dnas
   # an optional first argument should be the version number you want
-  # default to 0.0.2, the first release
-  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.2.0}/acorn.dna.json"
-  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.2.0}/acorn.dna.json
-  mkdir dna
-  mv acorn.dna.json dna/acorn.dna.json
+  # default to 0.3.1
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/profiles.dna.json"
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/projects.dna.json"
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/profiles.dna.json
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/projects.dna.json
+  mkdir -p dnas/profiles/dist
+  mkdir -p dnas/projects/dist
+  mv profiles.dna.json dnas/profiles/dist/profiles.dna.json
+  mv projects.dna.json dnas/projects/dist/projects.dna.json
   # hash the dna, and pipe the cleaned output into the gitignored dna_address file
-  hc hash --path dna/acorn.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
+  hc hash --path dnas/profiles/dist/profiles.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
  '');
 
  bundle-ui = (pkgs.writeShellScriptBin "acorn-bundle-ui" ''
@@ -23,7 +27,7 @@ let
   # this is necessary because we are serving a file that's normally served over
   # http, as a file://, breaking the /dna_connections.json endpoint, which it
   # would otherwise use
-  sed -i -e 's/connect(connectOpts)/connect({ url: "ws:\/\/localhost:8889" })/g' ./acorn-ui/src/index.js
+  sed -i -e 's/connect(connectOpts)/connect({ timeout: 4000, url: "ws:\/\/localhost:8889" })/g' ./acorn-ui/src/index.js
 
   # ui
   cd acorn-ui
@@ -42,7 +46,7 @@ let
  reset = (pkgs.writeShellScriptBin "acorn-reset" ''
   set -euxo pipefail
   rm -rf ./ui
-  rm -rf ./dna
+  rm -rf ./dnas
   rm -rf ./Acorn-*
   rm -rf $HOME/.config/Acorn
   rm -rf ./node_modules

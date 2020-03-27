@@ -2,7 +2,7 @@
 
 # build dependencies
 ui
-dna
+dnas
 acorn-hc
 acorn-ui
 

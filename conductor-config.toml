@@ -5,22 +5,22 @@ ui_bundles = []
 ui_interfaces = []
 
 [[agents]]
-id = 'hc-run-agent'
+id = 'development-agent'
 # to replace
 keystore_file = ''
 name = 'Agent 1'
 # to replace
 public_address = ''
 [[dnas]]
-file = './dna/acorn.dna.json'
+file = './dnas/profiles/dist/profiles.dna.json'
 # to replace
 hash = ''
-id = 'hc-run-dna'
+id = 'profiles-dna'
 
 [[instances]]
-agent = 'hc-run-agent'
-dna = 'hc-run-dna'
-id = 'acorn'
+agent = 'development-agent'
+dna = 'profiles-dna'
+id = 'profiles-instance'
 
 [instances.storage]
 type = 'lmdb'
@@ -28,11 +28,11 @@ type = 'lmdb'
 path = 'picklepath'
 
 [[interfaces]]
-admin = false
+admin = true
 id = 'websocket-interface'
 
 [[interfaces.instances]]
-id = 'acorn'
+id = 'profiles-instance'
 
 [interfaces.driver]
 port = 8889
