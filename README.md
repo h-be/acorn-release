@@ -37,8 +37,9 @@ nix-shell --run acorn-bundle-dna x.y.z
 
 This will result in there being
 
-1. a `dna_address` file with the address/hash of the DNA for this release
-2. a `dna/acorn.dna.json` file which contains the WASM and full DNA contents
+1. a `dna_address` file with the address/hash of the profiles DNA for this release
+2. a `dnas/profiles/dist/profiles.dna.json` file which contains the profiles WASM and full DNA
+3. a `dnas/projects/dist/projects.dna.json` file which contains the projects WASM and full DNA
 
 #### acorn-ui
 
