@@ -68,8 +68,13 @@ function updateConductorConfig(publicAddress) {
   const origConductorConfigPath = path.join(__dirname, CONDUCTOR_CONFIG_FILE)
   const conductorConfig = fs.readFileSync(origConductorConfigPath).toString()
 
-  // replace dna
+  // replace persistence_dir
   let newConductorConfig = conductorConfig.replace(
+    /persistence_dir = ''/g,
+    `persistence_dir = "${CONFIG_PATH}"`
+  )
+  // replace dna
+  newConductorConfig = newConductorConfig.replace(
     /hash = ''/g,
     `hash = "${dnaAddress}"`
   )

@@ -1,6 +1,7 @@
 
 bridges = []
-persistence_dir = '.'
+# to replace
+persistence_dir = ''
 ui_bundles = []
 ui_interfaces = []
 
