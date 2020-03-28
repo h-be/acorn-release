@@ -22,13 +22,6 @@ let
   mkdir ui
   git clone --single-branch --branch=master --depth=1 https://github.com/h-be/acorn-ui.git
 
-  # we need to configure the hc-web-client initialization to
-  # use the right websocket URL
-  # this is necessary because we are serving a file that's normally served over
-  # http, as a file://, breaking the /dna_connections.json endpoint, which it
-  # would otherwise use
-  sed -i -e 's/connect(connectOpts)/connect({ timeout: 4000, url: "ws:\/\/localhost:8889" })/g' ./acorn-ui/src/index.js
-
   # ui
   cd acorn-ui
   npm install
