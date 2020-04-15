@@ -4,10 +4,10 @@ let
   rm -rf dnas
   # an optional first argument should be the version number you want
   # default to 0.3.1
-  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/profiles.dna.json"
-  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/projects.dna.json"
-  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/profiles.dna.json
-  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.1}/projects.dna.json
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json"
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json"
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json
   mkdir -p dnas/profiles/dist
   mkdir -p dnas/projects/dist
   mv profiles.dna.json dnas/profiles/dist/profiles.dna.json
@@ -57,7 +57,7 @@ let
   echo 'this command expects apple-darwin or generic-linux-gnu to be passed as first argument'
   echo 'this command optionally can be passed holochain-rust tag as second argument'
   PLATFORM=''${1}
-  VERSION=''${2:-v0.0.44-alpha3}
+  VERSION=''${2:-v0.0.47-alpha1}
   HC=cli-$VERSION-x86_64-$PLATFORM.tar.gz
   HOLOCHAIN=holochain-$VERSION-x86_64-$PLATFORM.tar.gz
   curl -O -L https://github.com/holochain/holochain-rust/releases/download/$VERSION/$HC
