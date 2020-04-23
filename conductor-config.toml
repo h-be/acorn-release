@@ -2,11 +2,9 @@
 bridges = []
 # to replace
 persistence_dir = ''
-ui_bundles = []
-ui_interfaces = []
 
 [[agents]]
-id = 'development-agent'
+id = 'acorn-profiles-instance-agent'
 # to replace
 keystore_file = ''
 name = 'Agent 1'
@@ -16,12 +14,12 @@ public_address = ''
 file = './dnas/profiles/dist/profiles.dna.json'
 # to replace
 hash = ''
-id = 'profiles-dna'
+id = 'acorn-profiles-dna'
 
 [[instances]]
-agent = 'development-agent'
-dna = 'profiles-dna'
-id = 'profiles-instance'
+agent = 'acorn-profiles-instance-agent'
+dna = 'acorn-profiles-dna'
+id = 'acorn-profiles-instance'
 
 [instances.storage]
 type = 'lmdb'
@@ -30,10 +28,10 @@ path = 'picklepath'
 
 [[interfaces]]
 admin = true
-id = 'websocket-interface'
+id = 'Acorn-interface'
 
 [[interfaces.instances]]
-id = 'profiles-instance'
+id = 'acorn-profiles-instance'
 
 [interfaces.driver]
 port = 8889
@@ -65,3 +63,17 @@ type = "sim2h"
 # are a hidden reference to associated holochain/sim2h
 # release number, e.g. 9044 = 0.0.44
 sim2h_url = "ws://sim2h.harris-braun.com:9047/"
+
+[[ui_bundles]]
+hash = 'QmTT6oSPHNFn4x9ssBM14M1HznLVGjrFKCyBcsTyBudzfg'
+id = 'dna-connections'
+root_dir = './irrelevant'
+
+[[ui_interfaces]]
+bind_address = '127.0.0.1'
+bundle = 'dna-connections'
+dna_interface = 'Acorn-interface'
+id = 'dna-connections-interface'
+port = 3111
+reroute_to_root = true
+

@@ -20,12 +20,12 @@ let
   rm -rf acorn-ui
   rm -rf ui
   mkdir ui
-  git clone --single-branch --branch=master --depth=1 https://github.com/h-be/acorn-ui.git
+  git clone --single-branch --branch=holoscape-support --depth=1 https://github.com/h-be/acorn-ui.git
 
   # ui
   cd acorn-ui
   npm install
-  npm run build
+  npm run build-holoscape
   cd ..
   # copy all files from the acorn-ui/dist folder into the main ./ui folder
   cp -R ./acorn-ui/dist/. ./ui/
