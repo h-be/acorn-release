@@ -150,6 +150,10 @@ function startConductor() {
   run.stdout.on('data', (data) => {
     log('info', data.toString())
     if (data.toString().indexOf('Listening on http://127.0.0.1:3111') > -1) {
+      // we need the _dna_connections.json to be a file
+      // readable by the UI, over the ACORN_PROTOCOL_SCHEME
+      // so we request it from the conductor
+      // and write the response to a file
       request(
         'http://127.0.0.1:3111/_dna_connections.json',
         { json: true },
