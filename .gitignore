@@ -2,12 +2,12 @@
 
 # build dependencies
 ui
-dnas
-acorn-hc
+dna
 acorn-ui
 
 # build generated
-dna_address
+profiles_dna_address
+projects_dna_address
 
 # runtime data
 storage/**/*

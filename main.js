@@ -9,9 +9,12 @@ const { log } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
-// require('electron-debug')({ isEnabled: true })
+require('electron-debug')({ isEnabled: true })
 
-const { DNA_ADDRESS_FILE } = require('./dna-address-config')
+const {
+  PROFILES_DNA_ADDRESS_FILE,
+  PROJECTS_DNA_ADDRESS_FILE,
+} = require('./dna-address-config')
 
 // ELECTRON
 // Keep a global reference of the window object, if you don't, the window will
@@ -23,10 +26,13 @@ const CONFIG_PATH = path.join(app.getPath('appData'), 'Acorn')
 const KEYSTORE_FILE = 'keystore.key'
 const CONDUCTOR_CONFIG_FILE = 'conductor-config.toml'
 const DNA_CONNECTIONS_FILE = '_dna_connections.json'
+const DNA_FOLDER = 'dna'
+const PROJECTS_DNA_FILE = 'dna/projects.dna.json'
 const STORAGE_PATH = path.join(CONFIG_PATH, 'storage')
 const NEW_CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, CONDUCTOR_CONFIG_FILE)
 const KEYSTORE_FILE_PATH = path.join(CONFIG_PATH, KEYSTORE_FILE)
 const DNA_CONNECTIONS_FILE_PATH = path.join(CONFIG_PATH, DNA_CONNECTIONS_FILE)
+const DNA_FOLDER_PATH = path.join(CONFIG_PATH, DNA_FOLDER)
 
 if (!fs.existsSync(CONFIG_PATH)) {
   fs.mkdirSync(CONFIG_PATH)
@@ -102,7 +108,21 @@ function createWindow() {
 // overwrite the DNA hash address in the conductor-config
 // with the up to date one
 function updateConductorConfig(publicAddress) {
-  const dnaAddress = fs.readFileSync(path.join(__dirname, DNA_ADDRESS_FILE))
+  const profilesDnaAddress = fs.readFileSync(
+    path.join(__dirname, PROFILES_DNA_ADDRESS_FILE)
+  )
+  // do this step of moving the projects dna over into the AppData folder
+  // and naming it by its hash/address
+  // for the sake of mirroring holoscape behaviour
+  const projectsDnaAddress = fs.readFileSync(
+    path.join(__dirname, PROJECTS_DNA_ADDRESS_FILE)
+  )
+  fs.mkdirSync(DNA_FOLDER_PATH)
+  fs.copyFileSync(
+    path.join(__dirname, PROJECTS_DNA_FILE), // source
+    path.join(DNA_FOLDER_PATH, `${projectsDnaAddress}.dna.json`) // destination
+  )
+
   // read from the local template
   const origConductorConfigPath = path.join(__dirname, CONDUCTOR_CONFIG_FILE)
   const conductorConfig = fs.readFileSync(origConductorConfigPath).toString()
@@ -115,7 +135,7 @@ function updateConductorConfig(publicAddress) {
   // replace dna
   newConductorConfig = newConductorConfig.replace(
     /hash = ''/g,
-    `hash = "${dnaAddress}"`
+    `hash = "${profilesDnaAddress}"`
   )
   // replace agent public key
   newConductorConfig = newConductorConfig.replace(

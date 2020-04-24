@@ -1,54 +1,45 @@
 { pkgs }:
 let
  bundle-dna = (pkgs.writeShellScriptBin "acorn-bundle-dna" ''
-  rm -rf dnas
+  rm -rf dna
   # an optional first argument should be the version number you want
-  # default to 0.3.1
+  # default to 0.3.2
   echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json"
   echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json"
   curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json
   curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json
-  mkdir -p dnas/profiles/dist
-  mkdir -p dnas/projects/dist
-  mv profiles.dna.json dnas/profiles/dist/profiles.dna.json
-  mv projects.dna.json dnas/projects/dist/projects.dna.json
-  # hash the dna, and pipe the cleaned output into the gitignored dna_address file
-  hc hash --path dnas/profiles/dist/profiles.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > dna_address
+  mkdir dna
+  mv profiles.dna.json dna/profiles.dna.json
+  mv projects.dna.json dna/projects.dna.json
+  # hash the dna, and pipe the cleaned output into the gitignored profiles_dna_address file
+  hc hash --path dna/profiles.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > profiles_dna_address
+  # hash the dna, and pipe the cleaned output into the gitignored projects_dna_address file
+  hc hash --path dna/projects.dna.json | awk '/DNA Hash: /{print $NF}' | tr -d '\n' > projects_dna_address
  '');
 
  bundle-ui = (pkgs.writeShellScriptBin "acorn-bundle-ui" ''
-  rm -rf acorn-ui
   rm -rf ui
   mkdir ui
-  git clone --single-branch --branch=holoscape-support --depth=1 https://github.com/h-be/acorn-ui.git
-
-  # ui
-  cd acorn-ui
-  npm install
-  npm run build-holoscape
-  cd ..
-  # copy all files from the acorn-ui/dist folder into the main ./ui folder
-  cp -R ./acorn-ui/dist/. ./ui/
- '');
-
- clean = (pkgs.writeShellScriptBin "acorn-clean" ''
-  set -euxo pipefail
-  rm -rf ./acorn-ui
+  # an optional first argument should be the version number you want
+  # default to 0.3.4
+  curl -O -L https://github.com/h-be/acorn-ui/releases/download/v''${1:-0.3.4}/acorn-ui.zip
+  # unzip into the ./ui folder
+  unzip acorn-ui.zip -d ui
+  rm acorn-ui.zip
  '');
 
  reset = (pkgs.writeShellScriptBin "acorn-reset" ''
   set -euxo pipefail
   rm -rf ./ui
-  rm -rf ./dnas
+  rm -rf ./dna
   rm -rf ./Acorn-*
   rm -rf $HOME/.config/Acorn
+  rm -rf $HOME/Library/Application\ Support/Acorn
   rm -rf ./node_modules
  '');
 
  pre-build = (pkgs.writeShellScriptBin "acorn-pre-build" ''
   ${pkgs.nodejs}/bin/npm install
-  set -euxo pipefail
-  ${clean}/bin/acorn-clean
  '');
 
  fetch-bins = (pkgs.writeShellScriptBin "acorn-fetch-bins" ''
@@ -119,7 +110,6 @@ in
  buildInputs = [
   bundle-dna
   bundle-ui
-  clean
   reset
   fetch-bins
   macos-fix-dylibs

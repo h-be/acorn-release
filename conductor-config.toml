@@ -11,7 +11,7 @@ name = 'Agent 1'
 # to replace
 public_address = ''
 [[dnas]]
-file = './dnas/profiles/dist/profiles.dna.json'
+file = './dna/profiles.dna.json'
 # to replace
 hash = ''
 id = 'acorn-profiles-dna'
@@ -74,6 +74,7 @@ bind_address = '127.0.0.1'
 bundle = 'dna-connections'
 dna_interface = 'Acorn-interface'
 id = 'dna-connections-interface'
+# needs to match acorn-hc
 port = 3111
 reroute_to_root = true
 
