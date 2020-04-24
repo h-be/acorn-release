@@ -9,7 +9,7 @@ const { log } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
-require('electron-debug')({ isEnabled: true })
+// require('electron-debug')({ isEnabled: true })
 
 const {
   PROFILES_DNA_ADDRESS_FILE,
