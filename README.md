@@ -29,25 +29,36 @@ It needs to know which versions you want to be running or packaging.
 
 #### acorn-hc
 
-You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.0.2
+You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.3.2
 
 ```bash
-nix-shell --run acorn-bundle-dna x.y.z
+nix-shell --run 'acorn-bundle-dna x.y.z'
+```
+
+or just use the latest default
+
+```bash
+nix-shell --run acorn-bundle-dna
 ```
 
 This will result in there being
 
-1. a `dna_address` file with the address/hash of the profiles DNA for this release
-2. a `dnas/profiles/dist/profiles.dna.json` file which contains the profiles WASM and full DNA
-3. a `dnas/projects/dist/projects.dna.json` file which contains the projects WASM and full DNA
+1. a `profiles_dna_address` file with the address/hash of the profiles DNA for this release
+2. a `projects_dna_address` file with the address/hash of the projects DNA for this release
+3. a `dna/profiles.dna.json` file which contains the profiles WASM and full DNA
+4. a `dna/projects.dna.json` file which contains the projects WASM and full DNA
 
 #### acorn-ui
 
-It currently just pulls the latest from the `master` branch of [acorn-ui](https://github.com/h-be/acorn-ui),
-but that will be updated to make it taggable at specific versions,
-once [acorn-ui](https://github.com/h-be/acorn-ui) has its own release and upload process.
+You can pass in a version number of an [acorn-ui](https://github.com/h-be/acorn-ui) release, like 0.3.4
 
 Just run
+
+```bash
+nix-shell --run 'acorn-bundle-ui x.y.z'
+```
+
+or just use the latest default
 
 ```bash
 nix-shell --run acorn-bundle-ui
