@@ -6,3 +6,4 @@ function log(level, message) {
   electronLogger[level](message)
 }
 module.exports.log = log
+module.exports.logger = electronLogger

@@ -3,11 +3,11 @@ let
  bundle-dna = (pkgs.writeShellScriptBin "acorn-bundle-dna" ''
   rm -rf dna
   # an optional first argument should be the version number you want
-  # default to 0.3.2
-  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json"
-  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json"
-  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/profiles.dna.json
-  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.2}/projects.dna.json
+  # default to 0.3.4
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.4}/profiles.dna.json"
+  echo "fetching DNA from https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.4}/projects.dna.json"
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.4}/profiles.dna.json
+  curl -O -L https://github.com/h-be/acorn-hc/releases/download/v''${1:-0.3.4}/projects.dna.json
   mkdir dna
   mv profiles.dna.json dna/profiles.dna.json
   mv projects.dna.json dna/projects.dna.json
@@ -21,8 +21,8 @@ let
   rm -rf ui
   mkdir ui
   # an optional first argument should be the version number you want
-  # default to 0.3.4
-  curl -O -L https://github.com/h-be/acorn-ui/releases/download/v''${1:-0.3.4}/acorn-ui.zip
+  # default to 0.3.5
+  curl -O -L https://github.com/h-be/acorn-ui/releases/download/v''${1:-0.3.5}/acorn-ui.zip
   # unzip into the ./ui folder
   unzip acorn-ui.zip -d ui
   rm acorn-ui.zip
