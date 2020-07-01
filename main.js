@@ -1,11 +1,11 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, protocol } = require('electron')
+const { app, BrowserWindow, Menu, protocol, shell } = require('electron')
 const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
 const kill = require('tree-kill')
 const request = require('request')
-const { log } = require('./logger')
+const { log, logger } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
@@ -286,6 +286,18 @@ const menutemplate = [
     label: 'Application',
     submenu: [
       { label: 'About Application', selector: 'orderFrontStandardAboutPanel:' },
+      {
+        label: 'Open Config Folder',
+        click: function () {
+          shell.openItem(CONFIG_PATH)
+        },
+      },
+      {
+        label: 'Show Log File',
+        click: function () {
+          shell.showItemInFolder(logger.transports.file.file)
+        },
+      },
       { type: 'separator' },
       {
         label: 'Quit',

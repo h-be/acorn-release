@@ -29,7 +29,7 @@ It needs to know which versions you want to be running or packaging.
 
 #### acorn-hc
 
-You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.3.2
+You can pass in a version number of an [acorn-hc](https://github.com/h-be/acorn-hc) release, like 0.3.4
 
 ```bash
 nix-shell --run 'acorn-bundle-dna x.y.z'
@@ -50,7 +50,7 @@ This will result in there being
 
 #### acorn-ui
 
-You can pass in a version number of an [acorn-ui](https://github.com/h-be/acorn-ui) release, like 0.3.4
+You can pass in a version number of an [acorn-ui](https://github.com/h-be/acorn-ui) release, like 0.3.5
 
 Just run
 
