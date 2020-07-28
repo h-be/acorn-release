@@ -21,8 +21,8 @@ let
   rm -rf ui
   mkdir ui
   # an optional first argument should be the version number you want
-  # default to 0.3.5
-  curl -O -L https://github.com/h-be/acorn-ui/releases/download/v''${1:-0.3.5}/acorn-ui.zip
+  # default to 0.3.8
+  curl -O -L https://github.com/h-be/acorn-ui/releases/download/v''${1:-0.3.8}/acorn-ui.zip
   # unzip into the ./ui folder
   unzip acorn-ui.zip -d ui
   rm acorn-ui.zip
