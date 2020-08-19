@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, config }:
 let
  bundle-dna = (pkgs.writeShellScriptBin "acorn-bundle-dna" ''
   rm -rf dna
@@ -114,7 +114,7 @@ let
  export zip_artifact='./?'
  export zip_artifact_name='?'
  export tag=''${CIRCLE_TAG:-${tag}}
- build-linux
+ acorn-build-linux
  github-release upload --file "$zip_artifact" --owner ${config.release.github.owner} --repo ${config.release.github.repo} --tag $tag --name $zip_artifact_name --token $GITHUB_DEPLOY_TOKEN
  '';
  
