@@ -21,6 +21,15 @@ jobs:
        ./Users/distiller/.nix-profile/etc/profile.d/nix.sh
        nix-shell --run echo
 
+  release-linux:
+    docker:
+      - image: holochain/holonix:latest.master
+    steps:
+      - checkout
+      - run:
+          no_output_timeout: 20m
+          command: nix-shell --run release-linux
+
 workflows:
  version: 2.1
  tests:
@@ -28,3 +37,9 @@ workflows:
    - test-linux
    # @todo get a mac plan for circle
    # - test-darwin
+   - release-linux:
+       filters:
+         branches:
+           ignore: /.*/
+         tags:
+           only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
