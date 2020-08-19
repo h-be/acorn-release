@@ -21,14 +21,14 @@ jobs:
        ./Users/distiller/.nix-profile/etc/profile.d/nix.sh
        nix-shell --run echo
 
-  release-linux:
-    docker:
-      - image: holochain/holonix:latest.master
-    steps:
+ release-linux:
+   docker:
+     - image: holochain/holonix:latest.master
+   steps:
       - checkout
       - run:
-          no_output_timeout: 20m
-          command: nix-shell --run release-linux
+         no_output_timeout: 20m
+         command: nix-shell --run release-linux
 
 workflows:
  version: 2.1
