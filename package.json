@@ -1,6 +1,6 @@
 {
   "name": "Acorn",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A Holochain State of Affairs Tree application",
   "main": "main.js",
   "scripts": {
