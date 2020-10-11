@@ -6,17 +6,15 @@ dna
 acorn-ui
 
 # build generated
-profiles_dna_address
-projects_dna_address
 
 # runtime data
-storage/**/*
+storage
 
 # electron-packager folders
 Acorn-*
 
 # copied binaries
-hc
+lair-keystore
 holochain
 
 .DS_Store

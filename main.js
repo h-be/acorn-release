@@ -4,17 +4,13 @@ const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
 const kill = require('tree-kill')
-const request = require('request')
 const { log, logger } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
 // enables the devtools window automatically
 // require('electron-debug')({ isEnabled: true })
 
-const {
-  PROFILES_DNA_ADDRESS_FILE,
-  PROJECTS_DNA_ADDRESS_FILE,
-} = require('./dna-address-config')
+const { AdminWebsocket } = require('@holochain/conductor-api')
 
 // ELECTRON
 // Keep a global reference of the window object, if you don't, the window will
@@ -22,56 +18,34 @@ const {
 let mainWindow
 let quit = false
 
-const CONFIG_PATH = path.join(app.getPath('appData'), 'Acorn')
-const KEYSTORE_FILE = 'keystore.key'
-const CONDUCTOR_CONFIG_FILE = 'conductor-config.toml'
-const DNA_CONNECTIONS_FILE = '_dna_connections.json'
-const DNA_FOLDER = 'dna'
-const PROJECTS_DNA_FILE = 'dna/projects.dna.json'
-const STORAGE_PATH = path.join(CONFIG_PATH, 'storage')
-const NEW_CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, CONDUCTOR_CONFIG_FILE)
-const KEYSTORE_FILE_PATH = path.join(CONFIG_PATH, KEYSTORE_FILE)
-const DNA_CONNECTIONS_FILE_PATH = path.join(CONFIG_PATH, DNA_CONNECTIONS_FILE)
-const DNA_FOLDER_PATH = path.join(CONFIG_PATH, DNA_FOLDER)
+// THESE ARE SIMILAR, but different, than the acorn-hc and development
+// veresions of these same ports
+const APP_PORT = 8889 // MUST MATCH ACORN_UI config
+const ADMIN_PORT = 1235 // MUST MATCH ACORN_UI config
+const PROFILES_APP_ID = 'profiles-app' // MUST MATCH ACORN_UI config
+const MATCH_ACORN_UI_PROFILES_DNA_NICK = 'profiles.dna.gz'
+
+const HOLOCHAIN_BIN = './holochain'
+const LAIR_KEYSTORE_BIN = './lair-keystore'
+
+// TODO: make this based on version number?
+const CONFIG_PATH = path.join(app.getPath('appData'), 'AcornNew')
+const STORAGE_PATH = path.join(CONFIG_PATH, 'database')
+const CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, 'conductor-config.toml')
 
 if (!fs.existsSync(CONFIG_PATH)) {
   fs.mkdirSync(CONFIG_PATH)
-}
-if (!fs.existsSync(STORAGE_PATH)) {
   fs.mkdirSync(STORAGE_PATH)
-}
+  fs.writeFileSync(
+    CONDUCTOR_CONFIG_PATH,
+    `
+environment_path = "${STORAGE_PATH}"
+use_dangerous_test_keystore = false
 
-let HC_BIN = './hc'
-let HOLOCHAIN_BIN = './holochain'
-
-const ACORN_PROTOCOL_SCHEME = 'acorn-protocol'
-/// We want to be able to use localStorage/sessionStorage.
-/// Chromium doesn't allow that for every source.
-/// Since we are using custom URI schemes to redirect UIs' resources
-/// specific URI schemes here to be privileged.
-console.log('Registering scheme as privileged:', ACORN_PROTOCOL_SCHEME)
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: ACORN_PROTOCOL_SCHEME,
-    privileges: { standard: true, supportFetchAPI: true, secure: true },
-  },
-])
-
-const acornFileProtocolCallback = (request, callback) => {
-  let url = request.url.substr(ACORN_PROTOCOL_SCHEME.length + 3)
-  // /#/ because of react router
-  if (url === 'root/' || url.includes('/#/')) {
-    url = 'ui/index.html'
-  } else if (url.includes('root')) {
-    url = url.replace('root', 'ui')
-  }
-
-  if (url === 'ui/_dna_connections.json') {
-    newpath = DNA_CONNECTIONS_FILE_PATH
-  } else {
-    newpath = path.normalize(`${__dirname}/${url}`)
-  }
-  callback({ path: newpath })
+[[admin_interfaces]]
+driver.type = "websocket"
+driver.port = ${ADMIN_PORT}`
+  )
 }
 
 function createWindow() {
@@ -85,7 +59,7 @@ function createWindow() {
   })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`${ACORN_PROTOCOL_SCHEME}://root`)
+  mainWindow.loadURL('file://' + __dirname + '/ui/index.html')
 
   // Open <a href='' target='_blank'> with default system browser
   mainWindow.webContents.on('new-window', function (event, url) {
@@ -105,162 +79,102 @@ function createWindow() {
   })
 }
 
-// overwrite the DNA hash address in the conductor-config
-// with the up to date one
-function updateConductorConfig(publicAddress) {
-  const profilesDnaAddress = fs.readFileSync(
-    path.join(__dirname, PROFILES_DNA_ADDRESS_FILE)
-  )
-  // do this step of moving the projects dna over into the AppData folder
-  // and naming it by its hash/address
-  // for the sake of mirroring holoscape behaviour
-  const projectsDnaAddress = fs.readFileSync(
-    path.join(__dirname, PROJECTS_DNA_ADDRESS_FILE)
-  )
-  fs.mkdirSync(DNA_FOLDER_PATH)
-  fs.copyFileSync(
-    path.join(__dirname, PROJECTS_DNA_FILE), // source
-    path.join(DNA_FOLDER_PATH, `${projectsDnaAddress}.dna.json`) // destination
-  )
+let holochain_handle
+let lair_keystore_handle
 
-  // read from the local template
-  const origConductorConfigPath = path.join(__dirname, CONDUCTOR_CONFIG_FILE)
-  const conductorConfig = fs.readFileSync(origConductorConfigPath).toString()
+const MAGIC_READY_STRING = 'Conductor ready.'
 
-  // replace persistence_dir
-  let newConductorConfig = conductorConfig.replace(
-    /persistence_dir = ''/g,
-    `persistence_dir = "${CONFIG_PATH}"`
-  )
-  // replace dna
-  newConductorConfig = newConductorConfig.replace(
-    /hash = ''/g,
-    `hash = "${profilesDnaAddress}"`
-  )
-  // replace agent public key
-  newConductorConfig = newConductorConfig.replace(
-    /public_address = ''/g,
-    `public_address = "${publicAddress}"`
-  )
-  // replace key path
-  newConductorConfig = newConductorConfig.replace(
-    /keystore_file = ''/g,
-    `keystore_file = "${KEYSTORE_FILE_PATH}"`
-  )
-  // replace pickle db storage path
-  newConductorConfig = newConductorConfig.replace(
-    /path = 'picklepath'/g,
-    `path = "${STORAGE_PATH}"`
-  )
-
-  // write to a folder we can write to
-  fs.writeFileSync(NEW_CONDUCTOR_CONFIG_PATH, newConductorConfig)
-}
-
-let run
-
-function startConductor() {
-  run = spawn(HOLOCHAIN_BIN, ['-c', NEW_CONDUCTOR_CONFIG_PATH], {
+async function startConductor() {
+  lair_keystore_handle = spawn(LAIR_KEYSTORE_BIN, [], {
     cwd: __dirname,
-    env: {
-      ...process.env,
-      RUST_BACKTRACE: 'full',
-    },
   })
-  run.stdout.on('data', (data) => {
-    log('info', data.toString())
-    if (data.toString().indexOf('Listening on http://127.0.0.1:3111') > -1) {
-      // we need the _dna_connections.json to be a file
-      // readable by the UI, over the ACORN_PROTOCOL_SCHEME
-      // so we request it from the conductor
-      // and write the response to a file
-      request(
-        'http://127.0.0.1:3111/_dna_connections.json',
-        { json: true },
-        (err, res, body) => {
-          fs.writeFileSync(DNA_CONNECTIONS_FILE_PATH, JSON.stringify(body))
-          // trigger refresh once we know
-          // interfaces have booted up
-          mainWindow.loadURL(`${ACORN_PROTOCOL_SCHEME}://root`)
-        }
-      )
-    }
+  lair_keystore_handle.stdout.on('data', (data) => {
+    log('info', 'lair-keystore: ' + data.toString())
   })
-  run.stderr.on('data', (data) => log('error', data.toString()))
-  run.on('exit', (code, signal) => {
-    if (signal) {
-      log(
-        'info',
-        `holochain process terminated due to receipt of signal ${signal}`
-      )
-    } else {
-      log('info', `holochain process terminated with exit code ${code}`)
-    }
+  lair_keystore_handle.stderr.on('data', (data) => {
+    log('error', 'lair-keystore> ' + data.toString())
+  })
+  lair_keystore_handle.on('exit', (_code, _signal) => {
     quit = true
     app.quit()
   })
+
+  await sleep(100)
+
+  holochain_handle = spawn(HOLOCHAIN_BIN, ['-c', CONDUCTOR_CONFIG_PATH], {
+    cwd: __dirname,
+  })
+  holochain_handle.stderr.on('data', (data) => {
+    log('error', 'holochain> ' + data.toString())
+  })
+  holochain_handle.on('exit', (_code, _signal) => {
+    quit = true
+    app.quit()
+  })
+  await new Promise((resolve, _reject) => {
+    holochain_handle.stdout.on('data', (data) => {
+      log('info', 'holochain: ' + data.toString())
+      if (data.toString().indexOf(MAGIC_READY_STRING) > -1) {
+        resolve()
+      }
+    })
+  })
+}
+
+async function installIfFirstLaunch(adminWs) {
+  const installedCells = await adminWs.listCellIds()
+  let myPubKey
+  if (installedCells.length === 0) {
+    myPubKey = await adminWs.generateAgentPubKey()
+  } else {
+    // use the same public key as any previously installed
+    // cell
+    myPubKey = installedCells[0][0]
+  }
+  try {
+    await adminWs.installApp({
+      agent_key: myPubKey,
+      app_id: PROFILES_APP_ID,
+      dnas: [
+        {
+          nick: MATCH_ACORN_UI_PROFILES_DNA_NICK,
+          path: './dna/profiles.dna.gz',
+        },
+      ],
+    })
+    await adminWs.activateApp({ app_id: PROFILES_APP_ID })
+    await adminWs.attachAppInterface({ port: APP_PORT })
+  } catch (e) {
+    console.log(e)
+    throw e
+  }
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', function () {
-  protocol.registerFileProtocol(
-    ACORN_PROTOCOL_SCHEME,
-    acornFileProtocolCallback,
-    (error) => {
-      if (error) throw error
-    }
-  )
-
+app.on('ready', async function () {
   createWindow()
-  // check if config and keys exist, if they don't, create
-  if (fs.existsSync(KEYSTORE_FILE_PATH)) {
-    startConductor()
-    return
-  }
-
-  log(
-    'info',
-    'could not find existing public key, now creating one and running setup'
-  )
-
-  let publicAddress
-  const setup = spawn(
-    HC_BIN,
-    ['keygen', '--path', KEYSTORE_FILE_PATH, '--nullpass', '--quiet'],
-    {
-      cwd: __dirname,
-    }
-  )
-  setup.stdout.once('data', (data) => {
-    // first line out of two is the public address
-    publicAddress = data.toString().split('\n')[0]
-  })
-  setup.stderr.on('data', (err) => {
-    log('error', err.toString())
-  })
-  setup.on('exit', (code) => {
-    log('info', code)
-    if (code === 0 || code === 127) {
-      // to avoid rebuilding key-config-gen
-      // all the time, according to new DNA address
-      // we can just update it after the fact this way
-      updateConductorConfig(publicAddress)
-      startConductor()
-    } else {
-      log('error', 'failed to perform setup')
-    }
-  })
+  await startConductor()
+  const adminWs = await AdminWebsocket.connect(`ws://localhost:${ADMIN_PORT}`)
+  await installIfFirstLaunch(adminWs)
+  // trigger refresh once we know
+  // interfaces have booted up
+  mainWindow.loadURL('file://' + __dirname + '/ui/index.html')
 })
 
 app.on('will-quit', (event) => {
+  // prevents double quitting
   if (!quit) {
     event.preventDefault()
     // SIGTERM by default
-    run &&
-      kill(run.pid, function (err) {
-        log('info', 'killed all sub processes')
+    holochain_handle &&
+      kill(holochain_handle.pid, function (err) {
+        log('info', 'killed all holochain sub processes')
+      })
+    lair_keystore_handle &&
+      kill(lair_keystore_handle.pid, function (err) {
+        log('info', 'killed all lair_keystore sub processes')
       })
   }
 })
@@ -327,3 +241,5 @@ const menutemplate = [
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menutemplate))
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(), ms))
