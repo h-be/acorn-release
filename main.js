@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, protocol, shell } = require('electron')
+const { app, BrowserWindow, Menu, shell } = require('electron')
 const spawn = require('child_process').spawn
 const fs = require('fs')
 const path = require('path')
@@ -24,6 +24,11 @@ const APP_PORT = 8889 // MUST MATCH ACORN_UI config
 const ADMIN_PORT = 1235 // MUST MATCH ACORN_UI config
 const PROFILES_APP_ID = 'profiles-app' // MUST MATCH ACORN_UI config
 const MATCH_ACORN_UI_PROFILES_DNA_NICK = 'profiles.dna.gz'
+
+// a special log from the conductor, specifying
+// that the interfaces are ready to receive incoming
+// connections
+const MAGIC_READY_STRING = 'Conductor ready.'
 
 const HOLOCHAIN_BIN = './holochain'
 const LAIR_KEYSTORE_BIN = './lair-keystore'
@@ -82,8 +87,6 @@ function createWindow() {
 let holochain_handle
 let lair_keystore_handle
 
-const MAGIC_READY_STRING = 'Conductor ready.'
-
 async function startConductor() {
   lair_keystore_handle = spawn(LAIR_KEYSTORE_BIN, [], {
     cwd: __dirname,
@@ -95,6 +98,13 @@ async function startConductor() {
     log('error', 'lair-keystore> ' + data.toString())
   })
   lair_keystore_handle.on('exit', (_code, _signal) => {
+    kill(holochain_handle.pid, function (err) {
+      if (!err) {
+        log('info', 'killed all holochain sub processes')
+      } else {
+        log('error', err)
+      }
+    })
     quit = true
     app.quit()
   })
@@ -108,6 +118,13 @@ async function startConductor() {
     log('error', 'holochain> ' + data.toString())
   })
   holochain_handle.on('exit', (_code, _signal) => {
+    kill(lair_keystore_handle.pid, function (err) {
+      if (!err) {
+        log('info', 'killed all lair_keystore sub processes')
+      } else {
+        log('error', err)
+      }
+    })
     quit = true
     app.quit()
   })
@@ -122,16 +139,9 @@ async function startConductor() {
 }
 
 async function installIfFirstLaunch(adminWs) {
-  const installedCells = await adminWs.listCellIds()
-  let myPubKey
-  if (installedCells.length === 0) {
-    myPubKey = await adminWs.generateAgentPubKey()
-  } else {
-    // use the same public key as any previously installed
-    // cell
-    myPubKey = installedCells[0][0]
-  }
-  try {
+  const dnas = await adminWs.listDnas()
+  if (dnas.length === 0) {
+    let myPubKey = await adminWs.generateAgentPubKey()
     await adminWs.installApp({
       agent_key: myPubKey,
       app_id: PROFILES_APP_ID,
@@ -143,11 +153,8 @@ async function installIfFirstLaunch(adminWs) {
       ],
     })
     await adminWs.activateApp({ app_id: PROFILES_APP_ID })
-    await adminWs.attachAppInterface({ port: APP_PORT })
-  } catch (e) {
-    console.log(e)
-    throw e
   }
+  await adminWs.attachAppInterface({ port: APP_PORT })
 }
 
 // This method will be called when Electron has finished
@@ -168,15 +175,21 @@ app.on('will-quit', (event) => {
   if (!quit) {
     event.preventDefault()
     // SIGTERM by default
-    holochain_handle &&
-      kill(holochain_handle.pid, function (err) {
-        log('info', 'killed all holochain sub processes')
-      })
-    lair_keystore_handle &&
-      kill(lair_keystore_handle.pid, function (err) {
-        log('info', 'killed all lair_keystore sub processes')
-      })
   }
+  kill(holochain_handle.pid, function (err) {
+    if (!err) {
+      log('info', 'killed all holochain sub processes')
+    } else {
+      log('error', err)
+    }
+  })
+  kill(lair_keystore_handle.pid, function (err) {
+    if (!err) {
+      log('info', 'killed all lair_keystore sub processes')
+    } else {
+      log('error', err)
+    }
+  })
 })
 
 // Quit when all windows are closed.
