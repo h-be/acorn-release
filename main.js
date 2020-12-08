@@ -34,7 +34,7 @@ const HOLOCHAIN_BIN = './holochain'
 const LAIR_KEYSTORE_BIN = './lair-keystore'
 
 // TODO: make this based on version number?
-const CONFIG_PATH = path.join(app.getPath('appData'), 'AcornNew4')
+const CONFIG_PATH = path.join(app.getPath('appData'), 'AcornNew8')
 const STORAGE_PATH = path.join(CONFIG_PATH, 'database')
 const CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, 'conductor-config.yml')
 
@@ -61,7 +61,7 @@ network:
         bind_to: kitsune-quic://0.0.0.0:0
       proxy_config:
         type: remote_proxy_client
-        proxy_url: kitsune-proxy://R9IjlcdJTDVL88sTi_b8zbU87l6AM7mXTNWL8IHXIVE/kitsune-quic/h/proxy.holochain.org/p/5775/--`
+        proxy_url: kitsune-proxy://VYgwCrh2ZCKL1lpnMM1VVUee7ks-9BkmW47C_ys4nqg/kitsune-quic/h/proxy-acorn.harris-braun.com/p/12345/--`
   )
 }
 
@@ -155,13 +155,13 @@ async function startConductor() {
 
 async function installIfFirstLaunch(adminWs) {
   const dnas = await adminWs.listDnas()
-  const activeAppIds = await adminWs.listActiveAppIds()
+  const activeAppIds = await adminWs.listActiveApps()
   console.log(activeAppIds)
   if (dnas.length === 0) {
     let myPubKey = await adminWs.generateAgentPubKey()
     await adminWs.installApp({
       agent_key: myPubKey,
-      app_id: PROFILES_APP_ID,
+      installed_app_id: PROFILES_APP_ID,
       dnas: [
         {
           nick: MATCH_ACORN_UI_PROFILES_DNA_NICK,
@@ -169,7 +169,7 @@ async function installIfFirstLaunch(adminWs) {
         },
       ],
     })
-    await adminWs.activateApp({ app_id: PROFILES_APP_ID })
+    await adminWs.activateApp({ installed_app_id: PROFILES_APP_ID })
   }
   await adminWs.attachAppInterface({ port: APP_PORT })
 }
