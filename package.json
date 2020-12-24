@@ -25,7 +25,8 @@
     "fix-path": "^2.1.0",
     "open": "^6.3.0",
     "sudo-prompt": "^9.0.0",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "electron-devtools-installer": "^3.1.1"
   },
   "devDependencies": {
     "electron": "^8.5.2"

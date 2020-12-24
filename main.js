@@ -1,14 +1,18 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, shell } = require('electron')
 const spawn = require('child_process').spawn
+const {
+  default: installExtension,
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} = require('electron-devtools-installer')
 const fs = require('fs')
 const path = require('path')
 const kill = require('tree-kill')
 const { log, logger } = require('./logger')
 require('electron-context-menu')()
 require('fix-path')()
-// enables the devtools window automatically
-require('electron-debug')({ isEnabled: true })
+require('electron-debug')({ isEnabled: true, showDevTools: false })
 
 const { AdminWebsocket } = require('@holochain/conductor-api')
 
@@ -34,7 +38,7 @@ const HOLOCHAIN_BIN = './holochain'
 const LAIR_KEYSTORE_BIN = './lair-keystore'
 
 // TODO: make this based on version number?
-const CONFIG_PATH = path.join(app.getPath('appData'), 'AcornNew8')
+const CONFIG_PATH = path.join(app.getPath('appData'), 'HcAcorn')
 const STORAGE_PATH = path.join(CONFIG_PATH, 'database')
 const CONDUCTOR_CONFIG_PATH = path.join(CONFIG_PATH, 'conductor-config.yml')
 
@@ -61,7 +65,7 @@ network:
         bind_to: kitsune-quic://0.0.0.0:0
       proxy_config:
         type: remote_proxy_client
-        proxy_url: kitsune-proxy://VYgwCrh2ZCKL1lpnMM1VVUee7ks-9BkmW47C_ys4nqg/kitsune-quic/h/proxy-acorn.harris-braun.com/p/12345/--`
+        proxy_url: kitsune-proxy://VYgwCrh2ZCKL1lpnMM1VVUee7ks-9BkmW47C_ys4nqg/kitsune-quic/h/kitsune-proxy.harris-braun.com/p/4010/--`
   )
 }
 
@@ -126,8 +130,8 @@ async function startConductor() {
   holochain_handle = spawn(HOLOCHAIN_BIN, ['-c', CONDUCTOR_CONFIG_PATH], {
     cwd: __dirname,
     env: {
-      RUST_BACKTRACE: 1
-    }
+      RUST_BACKTRACE: 1,
+    },
   })
   holochain_handle.stderr.on('data', (data) => {
     log('error', 'holochain> ' + data.toString())
@@ -155,8 +159,7 @@ async function startConductor() {
 
 async function installIfFirstLaunch(adminWs) {
   const dnas = await adminWs.listDnas()
-  const activeAppIds = await adminWs.listActiveApps()
-  console.log(activeAppIds)
+  // const activeAppIds = await adminWs.listActiveApps()
   if (dnas.length === 0) {
     let myPubKey = await adminWs.generateAgentPubKey()
     await adminWs.installApp({
@@ -170,14 +173,18 @@ async function installIfFirstLaunch(adminWs) {
       ],
     })
     await adminWs.activateApp({ installed_app_id: PROFILES_APP_ID })
+    await adminWs.attachAppInterface({ port: APP_PORT })
   }
-  await adminWs.attachAppInterface({ port: APP_PORT })
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async function () {
+  installExtension(REDUX_DEVTOOLS)
+    .then(() => installExtension(REACT_DEVELOPER_TOOLS))
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err))
   createWindow()
   await startConductor()
   const adminWs = await AdminWebsocket.connect(`ws://localhost:${ADMIN_PORT}`)
