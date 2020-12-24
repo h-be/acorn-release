@@ -1,6 +1,6 @@
 {
   "name": "Acorn",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A Holochain State of Affairs Tree application",
   "main": "main.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "author": "Harris-Braun Enterprises, LLC and contributors",
   "license": "CAL-1.0 Beta 4",
   "dependencies": {
-    "@holochain/conductor-api": "git://github.com/Connoropolous/holochain-conductor-api.git",
+    "@holochain/conductor-api": "0.0.1-dev.14",
     "command-exists": "^1.2.8",
     "electron-context-menu": "^0.12.1",
     "electron-debug": "^3.0.1",
@@ -25,7 +25,8 @@
     "fix-path": "^2.1.0",
     "open": "^6.3.0",
     "sudo-prompt": "^9.0.0",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "electron-devtools-installer": "^3.1.1"
   },
   "devDependencies": {
     "electron": "^8.5.2"
