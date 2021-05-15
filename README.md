@@ -1,3 +1,7 @@
+# Deprecated
+
+## This code now lives at [https://github.com/h-be/acorn](https://github.com/h-be/acorn) in the `electron` folder and releases are published there.
+
 # acorn-release
 
 A distributable version of the peer-to-peer [Acorn](https://github.com/h-be/acorn-docs) [holochain](https://holochain.org) system packaged as a native application for Linux and Mac.
